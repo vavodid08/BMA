@@ -1,0 +1,18 @@
+#processing_overlay
+{
+	position: absolute;
+	/*zIndex: 99998;*/
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color:#FFFFFF;
+	filter:progid:DXImageTransform.Microsoft.Alpha(opacity=50);
+    opacity:0.5;
+	cursor:wait;
+}
+
+.loadingImage {
+	width: 45px;
+	padding-left: 50px;
+}

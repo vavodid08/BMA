@@ -1,0 +1,360 @@
+
+function doPageServiceJump(collectionID, pageIncrement) {
+	
+    /*tomo la tabla */    
+	var collection = document.getElementById(collectionID);
+	
+    /* tomo el numero de pagina actual */
+	var pageNumber = parseInt(collection.getAttribute('pagenumber'));
+	var totalrecords = parseInt(collection.getAttribute('totalrecords'));
+	var lotsize  = parseInt(collection.getAttribute('lotsize'));
+    var nextRow = parseInt(collection.getAttribute('nextRow'));
+    var registersperpage  = parseInt(collection.getAttribute('registersperpage'));
+    var pageSize = lotsize / registersperpage;
+    /** Used to request a new lot, for example when hitting back arrow being in page 1 */
+    var requestLot = false;
+ 	if (lotsize == registersperpage) {
+	 	requestLot = true;
+	}		
+	if (pageIncrement == -1) {
+		if (pageNumber % pageSize == 1) {	//request previous lot
+			nextRow = nextRow - totalrecords - lotsize;
+			requestLot = true;
+		}
+	}
+	
+	if (pageIncrement == 1) {  //request next lot
+		if ((pageNumber+1) % pageSize == 1) {
+			requestLot = true;
+		}
+	}
+	
+	if (pageIncrement == -2) {
+		nextRow = 1;
+		if (pageNumber > pageSize) {
+			requestLot = true;
+		}
+	}
+	
+    submitPageJump(collectionID, pageIncrement, 999, nextRow, requestLot, pageNumber); //maxPages is irrelevant (999)
+    customizedButtonsInPagination();
+}
+
+
+function doPageJump(collectionID, pageIncrement) {
+	
+    /*tomo la tabla */    
+	var collection = document.getElementById(collectionID);
+	
+    /* tomo el numero de pagina actual */
+	var pageNumber = parseInt(collection.getAttribute('pagenumber'));
+    var maxPages = parseInt(collection.getAttribute('maxPages'));
+
+	if (maxPages==1){
+		modifyCollImages(false,false,false,false, collectionID);
+		return;
+	}
+ 
+ 
+ 	if (pageIncrement == 1 || pageIncrement == -1){
+		if ( (pageNumber + pageIncrement) < 1  || (pageNumber + pageIncrement) > maxPages){
+			return;
+		}
+    }
+    submitPageJump(collectionID, pageIncrement, maxPages, 0, false, pageNumber);
+
+	//si me fui directo al principio o al final    
+    if ( pageIncrement == 2){
+    	modifyCollImages(true,true,false,false, collectionID);
+    	return;
+    }
+    if ( pageIncrement == -2){
+    	modifyCollImages(false,false,true,true, collectionID);
+    	return;
+    }
+
+    /* si esta fuera de rango no hago nada */
+    if ( (pageNumber + pageIncrement) <= 1){
+    	modifyCollImages(false,false,true,true, collectionID);
+    }else
+	    if ( (pageNumber + pageIncrement) >= maxPages){
+	    	modifyCollImages(true,true,false,false, collectionID);
+	    }else{
+	    	modifyCollImages(true,true,true,true, collectionID);
+	    }
+    customizedButtonsInPagination();
+}
+
+
+
+function submitPageJump(collectionID, pageIncrement, maxPages, nextRow, requestLot, pageNumber){
+    
+        var str = '';
+	  	/*Agergo los ids de los items seleccionados*/
+	  	var params = encodeForm(getDocumentIDForm());
+	  	str += params;
+		str = str.substr(0, (str.length - 1)); 
+
+		updateHiddenColumn(collectionID+'_columnFilter');
+		var formElement = document.getElementById('uuid');
+		if ( formElement != null){
+			str+= '&'+ formElement.name  + '='  + encodeURI(formElement.value);
+		}
+		
+		formElement = document.getElementById('IDContexto');
+		if ( formElement != null){
+			str+='&'+ formElement.name  + '='  + encodeURI(formElement.value);
+		}
+		
+		/************************************************************************/
+		var dataToSend="";
+		if (CyberBank.encryption.enable) {
+			var p_temp = getRandomPassword();
+			str = JSON.stringify(createSecureRequest(str, p_temp));
+			dataToSend = {parameters : str}
+		}else{
+			dataToSend = str;
+		}
+		
+		$.ajaxInvoker({
+			type: 'POST',
+			url: 'collection/jump.do',
+			data: dataToSend,
+			headers: { 'Content-type': 'application/x-www-form-urlencoded', 
+				'colId': collectionID, 'increment': pageIncrement, 
+				'cantPages': maxPages, 'columna': '', 
+				'nextRow': nextRow, 'requestLot': requestLot, 'pageNumber': pageNumber},
+			async: false
+			}).done(function(data, textStatus, resp) {
+				var respText = data;
+				if (CyberBank.encryption.enable) {
+					respText = resolveSecureResponse(data, p_temp);
+				}
+				
+				var aCollection = isGridPaging(collectionID) ? "gview_" + collectionID : collectionID;
+				$("#myPager_" + collectionID).remove();
+	           	var tabla =document.getElementById(aCollection);
+	           //  Pisa el parentNode porque necesita sobreescribir la info de paginado que
+	           //  esta como atributo de la tabla y no en tabla.innerHTML
+	           // FIXME: Adicionalmente, se agrega el caso particular de la consolidada que esta dentro de un DIV
+	           if (isGridPaging(collectionID) || $("#"+aCollection).parent().attr("id")=='groupConsolidada') { //Porque las grillas se wrappean en un div
+					tabla.parentNode.parentNode.innerHTML = respText;
+	           } else {
+	       			tabla.parentNode.innerHTML = respText;
+	           }
+	
+	        	//Convert to grid if 'isGrid' attribute is present.
+	        	grid.htmlTableToGrid(collectionID);
+			//fillUuid();
+	        	$(document).trigger( "paginationComplete", [ collectionID ] );
+	            hideColumns(collectionID+'_columnFilter',collectionID);
+	            validateMaxColumnFilter(collectionID+'_columnFilter', $('#' + collectionID + '_columnFilter_maxColumnFilter').val());
+	            //paintOnRegisterRow();
+	            customizedButtonsInPagination();
+	}).always(function() { clearTabComponent(); $.hideprogress(); });
+    
+}
+
+function enterByClick(myfield, e) {
+	var keycode;
+	
+	if (window.event)
+		keycode = window.event.keyCode;
+	else if (e)
+		keycode = e.which;
+	else
+		return true;
+
+	if (keycode == 13) {
+		myfield.click();
+	}
+}
+
+function submitColapsableCollection(collectionID, colapsable){
+	$('#headerColapsable_'+collectionID).removeClass('imagenFlecha'); 
+	$('#headerColapsable_'+collectionID).addClass('imagenLoading');
+	$('#headerColapsable_'+collectionID).attr('onclick','').unbind('click');
+	var uuid = $('#uuid').val();
+	var contexto = $('#IDContexto').val();
+	var functOnClick;
+	var $this = $('#'+collectionID);
+	events = $this.data('events');
+	if( events && events['click'] ){
+	  $.each( events['click'], function(){
+	   functOnClick=this;
+	});
+	}
+
+	/*Paso como parametro los items seleccionados*/
+  	var params = encodeForm(getDocumentIDForm()).split('&');
+  	var selectedItems = '';
+  	for (var i = 0; i < params.length; i++) {
+  		var param = params[i].split('=');
+  		if (param.length > 1 && param[0].indexOf("encodedcollection_") === 0) {
+  			selectedItems = selectedItems + params[i] + "&";
+  		}
+  	}
+  	var paramsStr ='uuid='+uuid+'&IDContexto=' +contexto;
+  	
+  	var dataToSend="";
+		if (CyberBank.encryption.enable) {
+			var p_temp = getRandomPassword();
+			paramsStr = JSON.stringify(createSecureRequest(paramsStr, p_temp));
+			dataToSend = {parameters : paramsStr}
+		}else{
+			dataToSend = paramsStr;
+		}
+		//Por bloqueo de seguridad no se enviara el selectedItems en caso de ser  vacio
+		var headers = { 'Content-type': 'application/x-www-form-urlencoded', 'colId' : collectionID, 'colapsable': colapsable, 'selectedItems': selectedItems };
+		if(selectedItems == ''){
+			headers = { 'Content-type': 'application/x-www-form-urlencoded', 'colId' : collectionID, 'colapsable': colapsable};
+		}
+		
+  	$.ajaxInvoker({
+		type: 'POST',
+		url: 'collection/colapsable.do',
+		headers: headers, 
+		data: dataToSend,
+		async: true
+  	}).done(function(data, textStatus, resp) {
+			var result = data;
+			if (CyberBank.encryption.enable) {
+				result = resolveSecureResponse(data, p_temp);
+			}
+			var aCollection = isGridPaging(collectionID) ? "gview_" + collectionID : collectionID;
+			$("#myPager_" + collectionID).remove();
+			if (isGridPaging(collectionID)) {
+				$("#"+aCollection).parent().parent().html(result);
+		   } else {
+			   if (colapsable && $("#"+aCollection).parent().attr("id")=='groupConsolidada') {
+					$("#"+aCollection).parent().parent().html(result);
+			   } else {
+					$("#"+aCollection).parent().html(result);
+			   }
+			   $("#"+aCollection).bind('click',functOnClick);    	   
+			}
+			grid.htmlTableToGrid(collectionID);
+			customizedButtonsInPagination();
+		});
+}
+
+function customizedButtonsInPagination(){
+	/*Se impelenta este metodo para poder tener control sobre los botones de paginacion
+	desde un archivo perfilado sin modificar la clase padre encargada de crear los mismos*/
+}
+
+function doPageServiceNotSecuencialJump(collectionID, pageIncrement) {
+    /*tomo la tabla */    
+	var collection = document.getElementById(collectionID);
+	
+    /* tomo el numero de pagina actual */
+	var totalElementsAmount = parseInt(collection.getAttribute('totalElementsAmount'));
+	var maxPages = parseInt(collection.getAttribute('maxPages'));
+	var pageNumber = parseInt(collection.getAttribute('pagenumber'));
+	var totalrecords = parseInt(collection.getAttribute('totalrecords'));
+	var lotsize  = parseInt(collection.getAttribute('lotsize'));
+    var nextRow = parseInt(collection.getAttribute('nextRow'));
+    var registersperpage  = parseInt(collection.getAttribute('registersperpage'));
+    var pageSize = lotsize / registersperpage;
+    /** Used to request a new lot, for example when hitting back arrow being in page 1 */
+    var requestLot = false;
+    nextRow = nextRow + (pageIncrement*registersperpage);
+    /*Se determina si es necesario requerir otra pagina al servicio (lot)*/
+	// if (pageIncrement <= -1)  ==> No es necesario ya que se mantienen los registros de las invocaciones anteriores 
+	if (pageIncrement >= 1) {  //request next lot
+		if ((pageNumber+1) % pageSize <= 1) {
+			requestLot = true;
+		}
+	}
+	/*Si avanza hasta la ultima pagina*/
+	if (maxPages == pageNumber + pageIncrement){
+		requestLot = true;
+	} 
+    submitPageJump(collectionID, pageIncrement, maxPages, nextRow, requestLot, pageNumber); 
+}
+
+function doPageServiceSecuencialJump(collectionID, pageIncrement) {
+	
+    /*tomo la tabla */    
+	var collection = document.getElementById(collectionID);
+	
+    /* tomo el numero de pagina actual */
+	var pageNumber = parseInt(collection.getAttribute('pagenumber'));
+	var totalrecords = parseInt(collection.getAttribute('totalrecords'));
+	var lotsize  = parseInt(collection.getAttribute('lotsize'));
+    var nextRow = parseInt(collection.getAttribute('nextRow'));
+    var registersperpage  = parseInt(collection.getAttribute('registersperpage'));
+    var pageSize = lotsize / registersperpage;
+    /** Used to request a new lot, for example when hitting back arrow being in page 1 */
+    var requestLot = false;
+ 			
+	if (pageIncrement == -1) {
+		nextRow = 1;
+		if (pageNumber % pageSize == 1) {	//request previous lot
+			requestLot = true;
+		}
+	}
+	
+	if (pageIncrement == 1) {  //request next lot
+		nextRow = 1;
+		if ((pageNumber+1) % pageSize <= 1) {
+			requestLot = true;
+		}
+	}
+	
+	if (pageIncrement == -2) {
+		nextRow = 1;
+		if (pageNumber > pageSize) {
+			requestLot = true;
+		}
+	}
+	
+	$.showprogress();
+
+	setTimeout(function(){submitPageJump(collectionID, pageIncrement, 999, nextRow, requestLot, pageNumber);},100);
+}
+
+function doPageServiceSecuencialExtraJump(collectionID, pageIncrement) {
+	
+    /*tomo la tabla */    
+	var collection = document.getElementById(collectionID);
+	
+    /* tomo el numero de pagina actual */
+	var pageNumber = parseInt(collection.getAttribute('pagenumber'));
+	var totalrecords = parseInt(collection.getAttribute('totalrecords'));
+	var lotsize  = parseInt(collection.getAttribute('lotsize'));
+    var nextRow = parseInt(collection.getAttribute('nextRow'));
+    var registersperpage  = parseInt(collection.getAttribute('registersperpage'));
+    if(isNaN(lotsize)){
+        lotsize = totalrecords;
+    }
+    var pageSize = lotsize / registersperpage;
+    /** Used to request a new lot, for example when hitting back arrow being in page 1 */
+    var requestLot = false;
+ 			
+	if (pageIncrement == -1) {
+		nextRow = 1;
+		if (pageNumber % pageSize == 1) {	//request previous lot
+			requestLot = true;
+		}
+	}
+	
+	if (pageIncrement == 1) {  //request next lot
+		nextRow = 1;
+		if (pageNumber >= pageSize || pageSize < pageNumber + 1 ) {
+			requestLot = true;
+		}
+	}
+	
+	if (pageIncrement == -2) {
+		nextRow = 1;
+		if (pageNumber > pageSize) {
+			requestLot = true;
+		}
+	}
+	
+	$.showprogress();
+
+	setTimeout(function(){submitPageJump(collectionID, pageIncrement, 999, nextRow, requestLot, pageNumber);},100);
+}
+

@@ -1,0 +1,88 @@
+/**
+ * crypto.util.js (banking-api extension).
+ * Requires: aes.js, pbkdf2.js (CryptoJS v3.1.2+), jsencrypt.min.js.
+ */
+
+var publicRSAKey = "-----BEGIN PUBLIC KEY-----\
+ 		MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA4b2L3Gk8Q+qlcFQSRmho\
+	 	/fDPvrZ3A5jx3/9XE2X7N6EO2F9RcH23b8EY8hEEd7lHNXqHDYcpt97QPgey1lTq\
+	 	NItUrRqYFACU+5FFxUD6hwcibZFRaBy8PjHsfT2m9VcTlCAvViybHrwWMH73o9V8\
+	 	zLJfoFtxKKxfiTv4CBVIxLN+dTOJbqKgOYSRCG/3022rWcB4KpUqQlqTfp+3CreI\
+	 	IOcTVq9MZ41MvniMczBdC4ywOtBm/sd9acpUch2MKUbEe8nL9izfjahS6MADFAHq\
+	 	DTStCAsfPwh5S3yOj0cVtun6rkMhPG1Av6HT1bAWW8Du6BvF1ZKdC4ZY4t3/e005\
+	 	oQIDAQAB\
+	 	-----END PUBLIC KEY-----";
+
+/**
+ * Encrypt received text with RSA public key.
+ * @returns {string}
+ */
+function encryptText(text){
+	var encrypt = new JSEncrypt();
+	encrypt.setPublicKey(publicRSAKey);
+	return encrypt.encrypt(text);
+}
+
+/** Return a random password. */
+function getRandomPassword (){
+	return CryptoJS.lib.WordArray.random(10).toString();
+}
+
+/** 
+ * Encrypt received text with AES-256 (CryptoJS.PBKDF2 key), using a random password.
+ * Return a secure message request (json): {m : 'Encrypted Message', p : 'password',  s : 'salt', i : 'iv'}
+ * @param text 
+ **/
+function createSecureRequest (text) {
+	return createSecureRequest (text, getRandomPassword());
+}
+
+/** 
+ * Encrypt received text with AES-256 (CryptoJS.PBKDF2 key), using a custom password.
+ * Return a secure message request (json): {m : 'Encrypted Message', p : 'password',  s : 'salt', i : 'iv'}
+ * @param text 
+ **/
+function createSecureRequest (text, pass) {
+	var salt = 	CryptoJS.lib.WordArray.random(128/8);
+	var iv = 	CryptoJS.lib.WordArray.random(128/8);
+	
+	var key = CryptoJS.PBKDF2(pass, salt, {
+		keySize: 256/32, // 256
+	    iterations: 100
+	});
+
+	var encrypted = CryptoJS.AES.encrypt(text, key, { 
+	    iv: iv, 
+	    padding: CryptoJS.pad.Pkcs7,
+	    mode: CryptoJS.mode.CBC
+	});
+	
+	var password = encryptText(pass); // RSA
+	return {m : encrypted.toString(), p : password, s : salt.toString(), i : iv.toString()};
+}
+
+/** 
+ * Decrypt a secure message response with AES-256 (CryptoJS.PBKDF2 key), using a custom password.
+ *  SecureResponse parameter format (json): {m : 'Encrypted Message', s : 'salt', i : 'iv'}
+ **/
+function resolveSecureResponse(secureResponse, pass) {
+	if (typeof secureResponse === "string") {
+		secureResponse = $.parseJSON(secureResponse);
+	}
+	var text = secureResponse.m;
+	var passResponse = secureResponse.p;
+	var salt = CryptoJS.enc.Hex.parse(secureResponse.s);
+	var iv = CryptoJS.enc.Hex.parse(secureResponse.i);
+
+	var key = CryptoJS.PBKDF2(passResponse, salt, {
+		keySize : 256 / 32, // 256
+		iterations : 100
+	});
+
+	var decrypted = CryptoJS.AES.decrypt(text, key, {
+		iv : iv,
+		padding : CryptoJS.pad.Pkcs7,
+		mode : CryptoJS.mode.CBC
+	});
+	return CryptoJS.enc.Latin1.stringify(decrypted);
+}

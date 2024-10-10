@@ -1,0 +1,10 @@
+:root {
+	--color-principal-azul: rgb(0,48,87);
+	--color-secundario-azul: rgb(32,58,233);
+	--color-rosa-fuerte: rgb(255,67,81);
+	--color-gris:#292b2c;
+	--bg--slider--box: #0047BB;
+	--bg--slider--box--text: #ffffff;
+	--bg--slider--box--bg-button:#ff4351;
+	--bg--slider--box--bg-button--text:#ffffff;
+}

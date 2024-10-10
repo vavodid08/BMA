@@ -1,0 +1,309 @@
+/**
+ * Usa jquery UI Keyboard plugin. 
+ */
+var idKeyActivate = "";
+
+function initKeyboard(idElemActivador, idElemInput, keyType, aleatorio, posX, posY, ofset) {
+
+	if (idElemActivador != idKeyActivate) {
+		activadorDeDom(idElemActivador).controlar(tecladoVirtualDeDom(idElemInput, keyType, aleatorio, posX, posY, ofset));
+		idKeyActivate = idElemActivador;
+		tecladoVirtualDeDom(idElemInput, keyType, aleatorio, posX, posY, ofset).activar();
+		var kbElem = $("#"+idElemInput+"_keyboard div");
+	    kbElem.find("button[name=\"123\"]").remove();
+	    kbElem.find("button[name=\"125\"]").remove();
+	    kbElem.find("button[name=\"769\"]").remove();
+	    kbElem.find("button[name=\"39\"]").remove();
+	    kbElem.find("button[name=\"34\"]").remove();
+	    kbElem.find("button[name=\"124\"]").remove();
+	    kbElem.find("button[name=\"44\"]").remove();
+	    kbElem.find("button[name=\"60\"]").remove();
+	    kbElem.find("button[name=\"62\"]").remove();
+	    kbElem.find("button[name=\"95\"]").remove();
+	    kbElem.find("button[name=\"59\"]").remove();
+	    kbElem.find("button[name=\"58\"]").remove();
+	    kbElem.find("button[name=\"776\"]").remove();
+	    kbElem.find("button[name=\"42\"]").remove();
+	    kbElem.find("button[name=\"61\"]").remove();
+	    kbElem.find("button[name=\"38\"]").remove();
+	    kbElem.find("button[name=\"37\"]").remove();
+	    kbElem.find("button[name=\"35\"]").remove();
+	    kbElem.find("button[name=\"176\"]").remove();
+	    kbElem.find("button[name=\"172\"]").remove();
+	    kbElem.find("button[name=\"92\"]").remove();
+	    kbElem.find("button[name=\"771\"]").remove();
+	    kbElem.find("button[name=\"770\"]").remove();
+	    kbElem.find("button[name=\"768\"]").remove();
+	}
+	return false;
+}
+
+/**
+ * Usa jquery UI Keyboard plugin. 
+ */
+function activadorDeDom(idElemActivador) {
+	var jqElemActivador = jQuery("#" + idElemActivador);
+
+	// Devuelve un activador.
+	return {
+		controlar: function(activable) {
+			if (jqElemActivador.is(':checkbox')) {
+				jqElemActivador.change(function() {
+					return (jqElemActivador.is(":checked")) 
+							? activable.activar() 
+							: activable.desactivar();
+				});
+			} else if (jqElemActivador.is('a')) {
+//				jqElemActivador.click(function() {
+//					return activable.activar();
+//				});
+			} else {
+				throw "Tipo de elemento no soportado como activador: id=" + idElemActivador;
+			}
+		}
+	};
+}
+
+function tecladoVirtualDeDom(idElemInput, type, aleatorio, posX, posY, offset) {
+	var jqElem = jQuery("#" + idElemInput);
+
+	
+	if (posY === 'top') {
+		noPosY = 'bottom';
+	} else if (posY === 'bottom') {
+		noPosY = 'top';
+	} else noPosY = 'center';
+
+	
+	if (posX === 'left') {
+		noPosX = 'right';
+		myVal = noPosX + ' ' + noPosY;
+		atVal = posX + ' ' + posY;
+		at2Val = posX + ' ' + noPosY;
+	} else if (posX === 'right') {
+		noPosX = 'left';
+		myVal = noPosX + ' ' + noPosY;
+		atVal = posX + ' ' + posY;
+		at2Val = posX + ' ' + noPosY; }
+	else if (posX === 'center') {
+		myVal = 'center ' + noPosY;
+		atVal = 'center ' + posY;
+		at2Val = 'center ' + posY;
+	} else {
+		myVal = 'right center';
+		atVal = 'left center';
+		at2Val = 'left center';
+	}
+
+
+	var defaultconfig = defaultConfig(type);
+	var maxLength = jqElem.attr("maxlength");
+	if(maxLength == undefined || maxLength == ""){
+		defaultconfig.maxLength = false;
+	}else{
+		defaultconfig.maxLength = Number(maxLength);
+	}
+	if (aleatorio === 'true') {
+		jqElem.keyboard(defaultconfig).addScramble({
+			byRow: false,
+			byKeySet: false,
+			randomizeOnce: false
+		});
+	} else {
+		jqElem.keyboard(defaultconfig);
+	}
+
+
+
+
+	// privada
+	var keyboard = jqElem.getkeyboard();
+
+	// Devolver un un activable
+	return {
+		activar: function() {
+			keyboard.reveal();
+		},
+
+		desactivar: function() {
+			keyboard.close();
+		}
+	}
+
+	// private
+
+	function defaultConfig(type) {
+		return {
+			// *** choose layout ***
+			layout: type,
+
+			position: {
+				of: null, // optional - null (attach to input/textarea) or a jQuery object (attach elsewhere)
+				my: myVal,
+				at: atVal,
+				at2: at2Val // used when "usePreview" is false (centers keyboard at bottom of the input/textarea)
+			},
+
+			positionOffset: offset,
+
+			// allow jQuery position utility to reposition the keyboard on window resize
+			reposition: false,
+
+			// preview added above keyboard if true, original input/textarea used if false
+			usePreview: false,
+
+			// if true, the keyboard will always be visible
+			alwaysOpen: false,
+
+			// give the preview initial focus when the keyboard becomes visible
+			initialFocus: false,
+
+			// if true, keyboard will remain open even if the input loses focus.
+			stayOpen: false,
+
+			// *** change keyboard language & look ***
+			display: {
+				'a': '\u2714:aceptar (mayusculas-ingresar)', // check mark - same action as accept
+				'accept': 'aceptar:aceptar (mayusculas-ingresar)',
+				'alt': 'altgr:Alternate Graphemes',
+				'b': '\u2190:Backspace', // Left arrow (same as &larr;)
+				'bksp': 'borrar:Backspace',
+				'c': '\u2716:cerrar (Esc)', // big X, close - same action as cancel
+				'cancel': 'cerrar:cerrar (Esc)',
+				'clear': 'Limpiar:Limpiar', // clear num pad
+				'combo': '\u00f6:Toggle Combo Keys',
+				'dec': '.:Decimal', // decimal point for num pad (optional), change '.' to ',' for European format
+				'e': '\u21b5:ingresar', // down, then left arrow - enter symbol
+				'enter': 'ingresar:ingresar',
+				'lock': '\u21ea Lock:Caps Lock', // caps lock
+				'next': 'Next',
+				'prev': 'Prev',
+				's': '\u21e7:mayusculas', // thick hollow up arrow
+				'shift': 'may�sculas:mayusculas',
+				'sign': '\u00b1:Change Sign', // +/- sign for num pad
+				'space': '&nbsp;:Space',
+				't': '\u21e5:tabulador', // right arrow to bar (used since this virtual keyboard works with one
+							// directional tabs)
+				'tab': 'tabulador:tabulador' // \u21b9 is the true tab symbol (left & right arrows)
+			},
+
+			// Message added to the key title while hovering, if the mousewheel plugin exists
+			wheelMessage: 'Use mousewheel to see other keys',
+
+			css: {
+				input: '', // input & preview
+				container: '', // keyboard container
+				buttonDefault: '', // default state
+				buttonHover: '', // hovered button
+				buttonAction: '', // Action keys (e.g. Accept, Cancel, Tab, etc); replaces "actionClass"
+				buttonDisabled: '' // used when disabling the decimal button {dec}
+			},
+
+			// *** Useability ***
+			// Auto-accept content when clicking outside the keyboard (popup will close)
+			autoAccept: true,
+
+			// Prevents direct input in the preview window when true
+			lockInput: false,
+
+			// Prevent keys not in the displayed keyboard from being typed in
+			restrictInput: false,
+
+			// Check input against validate function, if valid the accept button is clickable;
+			// if invalid, the accept button is disabled.
+			acceptValid: true,
+
+			// Use tab to navigate between input fields
+			tabNavigation: false,
+
+			// press enter (shift-enter in textarea) to go to the next input field
+			enterNavigation: true,
+			// mod key options: 'ctrlKey', 'shiftKey', 'altKey', 'metaKey' (MAC only)
+			enterMod: 'altKey', // alt-enter to go to previous; shift-alt-enter to accept & go to previous
+
+			// if true, the next button will stop on the last keyboard input/textarea; prev button stops at first
+			// if false, the next button will wrap to target the first input/textarea; prev will go to the last
+			stopAtEnd: true,
+
+			// Set this to append the keyboard immediately after the input/textarea it is attached to.
+			// This option works best when the input container doesn't have a set width and when the
+			// "tabNavigation" option is true
+			appendLocally: true,
+
+			// If false, the shift key will remain active until the next key is (mouse) clicked on;
+			// if true it will stay active until pressed again
+			stickyShift: true,
+
+			// caret placed at the end of any text when keyboard becomes visible
+			//caretToEnd   : true,
+
+			// Prevent pasting content into the area
+			preventPaste: false,
+
+			// Set the max number of characters allowed in the input, setting it to false disables this option
+			maxLength: false,
+
+			// Mouse repeat delay - when clicking/touching a virtual keyboard key, after this delay the key
+			// will start repeating
+			repeatDelay: 500,
+
+			// Mouse repeat rate - after the repeatDelay, this is the rate (characters per second) at which the
+			// key is repeated. Added to simulate holding down a real keyboard key and having it repeat. I haven't
+			// calculated the upper limit of this rate, but it is limited to how fast the javascript can process
+			// the keys. And for me, in Firefox, it's around 20.
+			repeatRate: 0,
+
+			// resets the keyboard to the default keyset when visible
+			resetDefault: false,
+
+			// Event (namespaced) on the input to reveal the keyboard. To disable it, just set it to ''.
+			openOn: '',
+
+			// When the character is added to the input
+			keyBinding: 'mousedown',
+
+			// combos (emulate dead keys: http://en.wikipedia.org/wiki/Keyboard_layout#US-International)
+			// if user inputs `a the script converts it to ÃƒÂ , ^o becomes ÃƒÂ´, etc.
+			useCombos: false,
+
+			// *** Methods ***
+			// Callbacks - add code inside any of these callback functions as desired
+			initialized: function(e, keyboard, el) {},
+			visible: function(e, keyboard, el) {
+				//jqElem.val("");
+				jqElem.prop("readonly", true);
+			},
+			change: function(e, keyboard, el) {
+				if ($(el.attributes['showstrength']).length > 0) {
+					if ($(el.attributes['showstrength'].value == 'true')) {
+						testStrength($(el));
+					}
+				}
+			},
+			beforeClose: function(e, keyboard, el, accepted) {
+				jqElem.prop("readonly", false);
+			},
+			accepted: function(e, keyboard, el) {
+				keyboard.destroy();
+				idKeyActivate = "";
+			},
+			canceled: function(e, keyboard, el) {
+				keyboard.destroy();
+				idKeyActivate = "";
+			},
+			hidden: function(e, keyboard, el) {},
+
+			switchInput: null, // called instead of base.switchInput
+
+			// this callback is called just before the "beforeClose" to check the value
+			// if the value is valid, return true and the keyboard will continue as it should 
+			// (close if not always open, etc)
+			// if the value is not value, return false and the clear the keyboard value 
+			// ( like this "keyboard.$preview.val('');" ), if desired
+			// The validate function is called after each input, the "isClosing" value will be false;
+			// when the accept button is clicked, "isClosing" is true
+			validate: function(keyboard, value, isClosing) { return true; }
+		};
+	}
+
+}

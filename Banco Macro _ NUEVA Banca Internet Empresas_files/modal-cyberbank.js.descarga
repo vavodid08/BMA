@@ -1,0 +1,231 @@
+//var MAIN_FORM = "<form method=\"POST\" id=\"main_form\"";
+//var MAIN_FORM_IE = "<FORM id=main_form"; /** IE only matches when form is upperCase and without quotes... */
+
+
+/** 
+ * Check whether the main container is not empty. 
+ * @author hzerrizuela
+ */
+function isAnyBackGroundLayout() {
+//	var currentInnerHTML = document.getElementById('container').innerHTML;
+//	return  currentInnerHTML.indexOf(MAIN_FORM) != -1 || currentInnerHTML.indexOf(MAIN_FORM_IE) != -1;
+	return  $('#container').find('form#main_form').length > 0;
+
+}
+
+/**
+ * Calls the jquery plugin to show the modal window.
+ * Additionaly, if the modal window height exceeds 650px, it's set a fixed height and a scroll is added via css
+ * @author hzerrizuela 
+ */
+function showModalWindow() {
+	$('#modalWindow').jqm({modal: true}).jqmShow({ overlay: 70 }).jqDrag('.jqDrag').jqResize('.jqResize');
+ 	
+ 	$('#modalWindow').height($('#modalWindow').attr('modal-height'));
+ 	$('#modalWindow').width($('#modalWindow').attr('modal-width'));
+ 	
+ 	/*try {
+		document.getElementById(document.getElementById("focus").getAttribute('id_elem')).focus();
+	} 
+	catch (e) {
+
+	}*/
+}
+/*
+function showModalWindow() {
+	
+	$('#modalWindow').jqm({
+		modal: true,
+		blockMsgClass: 'ui-datepicker'
+//		,
+//		onShow: function(hash) {
+//			var datepicker = document.getElementById('ui-datepicker-div');
+//			if (datepicker){
+//				var divPicker = $(datepicker);
+//				var divPikerClone = divPicker.clone();
+//				hash.w.append(divPikerClone);
+//			} 
+//		},
+//		onHide: function(hash){
+//			var datepicker = document.getElementById('ui-datepicker-div');
+//			if (datepicker) $('body').append($(datepicker));
+//		}
+	}).jqmShow({ overlay: 70 }).jqDrag('.jqDrag').jqResize('.jqResize');
+ 	
+ 	$('#modalWindow').height($('#modalWindow').attr('modal-height'));
+ 	$('#modalWindow').width($('#modalWindow').attr('modal-width'));
+ 	
+ 	try {
+		document.getElementById(document.getElementById("focus").getAttribute('id_elem')).focus();
+	} 
+	catch (e) {
+
+	}
+}
+*/
+/**
+ * Checks if a certain text string contains the modal window div
+ * @author hzerrizuela
+ */
+function isModalResponse(texto) {
+	return texto.indexOf("modalWindow") != -1;
+}
+
+/**
+ * Gets the corresponding response text, depending on whether the background has to be shown or not. 
+ * @author hzerrizuela
+ */
+function getResponseText(texto) {
+	var nextInner = texto;
+
+	if (isModalResponse(texto)) {
+		if (isAnyBackGroundLayout()) {
+			$("input").each(function() {
+				var type = $(this).attr('type');
+
+				if (type == 'checkbox' || type == 'radio') {
+					$(this).attr("checked", $(this).is(':checked'));
+				} else {
+					$(this).attr("value", $(this).val());
+				}
+			});
+			$("select").each(function() {
+				var newSelected = $(this).find(":selected");
+				$(this).find('option').removeAttr('selected')
+				newSelected.attr("selected", true);
+			});
+
+			$("div#focus").remove();
+			
+			//nextInner = texto + document.getElementById('container').innerHTML;
+
+			var div = $('<div>').html(document.getElementById('container').innerHTML);
+			div.find('script').remove();
+			var str = div.html();
+		//		nextInner = texto + document.getElementById('container').innerHTML;
+			nextInner = texto + str;
+			
+			//previene que se le asigne foco a los elementos detras de la modal
+			setTimeout(function(){
+				preventFocusOutsideModal($('#main_form_modal'));
+			},100);
+		}
+	}
+	return nextInner;
+}
+
+function preventFocusOutsideModal(modal){
+	var inputs = $(modal).find('select, input, textarea, button, a,[tabindex]:not([tabindex^="-"])').filter(':visible').not(':disabled');
+	var firstInput = inputs.first();
+	var lastInput = inputs.last();
+	var focusInput = $(":focus");
+	var onblur = '';
+
+	/*set focus on first input*/
+	if(focusInput.length>0){
+		onblur = focusInput.attr('onblur');
+		if(onblur==undefined){
+			onblur = '';
+		}
+		focusInput.removeAttr('onblur');
+	}
+	
+	firstInput.focus();
+
+	if(focusInput.length>0){
+		focusInput.attr('onblur',onblur);
+	}
+
+	/*redirect last tab to first input*/
+	lastInput.on('keydown', function (e) {
+	   if ((e.which === 9 && !e.shiftKey)) {
+	       e.preventDefault();
+	       firstInput.focus();
+	   }
+	});
+
+	/*redirect first shift+tab to last input*/
+	firstInput.on('keydown', function (e) {
+	    if ((e.which === 9 && e.shiftKey)) {
+	        e.preventDefault();
+	        lastInput.focus();
+	    }
+	});
+}
+
+function getResponseTextInTab(texto, container) {
+	var nextInner = texto;
+	    	
+	if ( isModalResponse(texto) ) {
+		if (isAnyBackGroundLayout()) {
+			$("input").each(function() {
+				var type = $(this).attr('type');
+
+				if (type == 'checkbox' || type == 'radio') {
+					$(this).attr("checked", $(this).is(':checked'));
+				} else {
+					$(this).attr("value", $(this).val());
+				}
+			});
+			$("select").each(function() {
+				var newSelected = $(this).find(":selected");
+				$(this).find('option').removeAttr('selected')
+				newSelected.attr("selected", true);
+			});
+			nextInner = texto +  document.getElementById(container).innerHTML;  
+		}
+	}
+	return nextInner;
+}
+
+jQuery.fn.center = function () {
+    this.css("position","absolute");
+    this.css("top", Math.max(0, (($(window).height() - $(this).outerHeight()) / 2) + 
+                                                $(window).scrollTop() - 200) + "px");
+    this.css("left", Math.max(0, (($(window).width() - $(this).outerWidth()) / 2) + 
+                                                $(window).scrollLeft()- 250) + "px");
+    return this;
+}
+
+var modalError = {
+		
+	alert: function(msg) {
+	
+		$('#errorMsgPlaceholder').addClass("error-modal_errorMsgPlaceholder");
+		$('#errorWindowChild').addClass("error-modal_errorWindowChild");
+		$('#aceptarAlert').addClass("error-modal_aceptarAlert");	
+		$('#errorWindow').addClass("error-modal_errorWindow");
+		
+		$('#errorMsgPlaceholder').html(msg);
+		$("#errorWindow").center();		
+		$('#errorWindow').jqm({modal: true ,toTop: true}).jqmShow({ overlay: 70 }).jqDrag();
+		
+	} 
+	
+}
+
+var modalErrorLogin = {
+		
+		
+		alert: function(msg) {
+		
+			$('#errorMsgPlaceholder').addClass("error-modal_errorMsgPlaceholder");
+			$('#errorWindowChild').addClass("error-modal_errorWindowChild");
+			$('#closeBtn').addClass("error-modal_closeBtn");	
+			$('#closeBtn').attr('src', './images/cerrarAlertasLargeOver.png'); 
+			$('#errorWindow').addClass("error-modal_errorWindow");
+			
+			$('#errorMsgPlaceholder').html(msg);
+			$("#errorWindow").center();		
+			$('#errorWindow').jqm({modal: true ,toTop: true}).jqmShow({ overlay: 70 }).jqDrag();
+		} 
+		
+	}
+var overlayBlocker = {
+		show: function(){
+			$('<div class="OverlayBlocker" style="height: 100%; width: 100%; position: fixed; left: 0; top: 0; z-index: 2999; background-color: rgba(0, 0, 0, 0.4);"></div>').appendTo('body')
+		},
+		hide: function(){
+			$('.OverlayBlocker').remove();
+		}
+}

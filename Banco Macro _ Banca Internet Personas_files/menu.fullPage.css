@@ -1,0 +1,98 @@
+/* Centered texts in each section
+	* --------------------------------------- */
+	.section{
+		text-align:center;
+	}
+	
+/* Overwriting styles for the navigation dots (to place it where we want)
+	* --------------------------------------- */
+	.fullPage-slidesNav.bottom{
+		bottom: 130px;
+		padding-bottom: 300px;
+	}
+
+	#fp-nav ul, .fp-slidesNav ul {
+		/*bottom: 120px;*/
+		padding-bottom: 50px;
+	}
+
+/* Fixed header and footer.
+* --------------------------------------- */
+#headerFixed, #footerFixed{
+	position:fixed;	
+	display:block;
+	width: 100%;
+	z-index:9;
+}
+
+#headerFixed{
+	top:0px;
+}
+#footerFixed{
+	bottom:0px;
+}
+
+
+#menu li {
+	display:inline-block;
+	margin: 10px;
+	height: 30px;
+	width: 140px;
+	background-color: #FFFFFF;
+	color: #333333;
+	font-family: arial;
+	font-size: 14px;
+	-webkit-border-radius: 4px; 
+            border-radius: 4px; 
+	
+}
+
+#menu li.active{
+	background-color: #464646;
+	color: #FFFFFF;
+}
+
+#menu li a{
+	text-decoration:none;
+	color: #000;
+}
+
+#menu li.active a:hover{
+	color: #FFFFFF;
+}
+
+#menu li a:hover{
+	color: #FFFFFF;
+}
+
+
+#menu li:hover{
+	background-color: #464646;
+}
+
+#menu li a,
+
+#menu li.active a{
+	text-align: center;
+	padding-top: 5px;
+	vertical-align: middle;
+	display:block;
+	height: 100%;
+	width: 100%;
+}
+
+#menu li.active a{
+	color: #fff;
+}
+
+#menu{
+	position:fixed;
+	top:0;
+	left:0;
+	height: 40px;
+	z-index: 70;
+	width: 40%;
+	padding: 100px;
+	margin:0;
+	margin-left: 50px;
+}

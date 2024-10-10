@@ -1,0 +1,553 @@
+  /** Objeto que encapsula utilidades*/
+ var CyberBank = {};
+ var timeoutManagerInit=false;
+   	
+/** 
+ * MJM
+ * 
+ * Objeto CyberBank.utils
+ * */
+	
+	CyberBank.utils = {
+		/* Uso:
+		 * Atributo
+	    		saludo : 'saludos!',
+	    	Metodo
+	    		saludar: function(){alert('saludado!');}
+	    		
+	    	Invocacion: CyberBank.utils.saludo;
+	    				CyberBank.utils.saludar();
+	    */
+		createTimeOutManager: function() {
+			var timeout = $("#sessionTimeout").val();
+			$.cookie("timeout", new Date().getTime()); //This creates a new cookie.
+			if (timeout != undefined && timeoutManagerInit==false) {
+				timeoutManagerInit=true;
+		    	var timeOutManager = new TimeoutManager("", "", "", {"timeout" : timeout, "kickout" : 1, "checkInterval" : 0.5, "redirect" : 'true'});
+		    	timeOutManager.init();
+			}
+		},
+		
+		/** Cambia el cursor de los botones deshabilitados a puntero*/
+		resetButtonCursors: function () {
+			var buttonSpans = document.getElementsByTagName('span');
+			for(i = 0; i < buttonSpans.length; i++){
+            	if (buttonSpans[i].className == 'button') {
+					var buttonObj = buttonSpans[i].getElementsByTagName('button');
+					if(buttonObj[0].disabled){
+						//-- Cambia cursor del span contenedor del boton
+						eval('buttonSpans[i].style.cursor =\'default\'');
+						//-- Cambia cursor del boton
+						eval('buttonObj[0].style.cursor =\'default\'');
+					}
+				}
+			}
+		},
+		
+		//funcion a llamar para conectar
+		updateSucursalesByInstitution: function(itemSelected){
+			CyberBank.connection.async.connect(CyberBank.callbacks.updateSucursalesCombo, itemSelected);
+		},
+		agregaOptionEnIE: function(response , obj){
+		
+			if(obj != null) while (obj.hasChildNodes()) obj.removeChild(obj.firstChild);
+	   		
+	  		response = (new String(response)).split("</option>");
+	   		 	   		 	
+	   		for(i=0 ; i< response.length - 1; i++){
+	 			var option = new String(response[i]);
+	 	    	var opt = document.createElement('option');
+	 	     	
+				textoAmostrar =  option.substring(option.indexOf(">" , 0) + 1  , option.length);
+		   		opt.innerHTML = textoAmostrar;
+				opt.value = option.substring(option.indexOf("=", 0 ) + 2 , option.indexOf("\">" , 0));
+		 	    if(obj != null) obj.appendChild(opt);
+		
+   			}
+		}
+	};
+
+/**
+ * MJM 
+ * 
+ * Objeto Cyberbank.validator
+ */	
+	CyberBank.validator = {
+		
+		/*lista de errores*/
+		errors: {msg: ''},
+		fieldMap: {},
+
+		addTimeComponent: function(eId, eName, eValue){
+							if(!this.fieldMap[eId]){
+								this.fieldMap[eId] = {
+									name: eName,  
+									counter: eValue.length > 0 ? 1 : 0				
+								};
+							} else {
+								this.fieldMap[eId].counter++;
+							}
+						},
+		
+		validateHourFieldsConsistency: function() {
+			this.errors.msg = '';			
+			for (var key in this.fieldMap) {
+				if(this.fieldMap[key].counter < 2){
+					this.errors.msg = this.errors.msg + this.fieldMap[key].name + ' esta incompleto\n';
+				}
+			}
+			this.fieldMap = {};
+			return this.errors.msg.length;
+		},
+		
+		getErrors: function(){
+			return this.errors.msg;
+		}
+	};
+	
+/**
+ * MJM 
+ * 
+ * Objeto Cyberbank.connection.asynchronous
+ */	
+ 
+ 	CyberBank.connection = {};
+	
+	CyberBank.connection.async = {
+
+		connect:function(callBack, param){                
+					this.x=this.getConnectionObject();
+	                this.x.open('POST', 'index',false);
+	                var self = this;
+	                this.x.setRequestHeader('Content-Type','application/x-www-form-urlencoded; charset=UTF8');
+	                this.x.setRequestHeader('Connection', 'close');
+	                this.x.setRequestHeader('UpdateCombo', param);
+	                this.x.send('');
+	                if (this.x.readyState == 4) {
+	                
+	                	callBack(self.x.responseText);
+	                    delete self.x;
+	                
+	                }
+	                else{
+	                	return;
+	                }
+		},
+		
+		getConnectionObject: function() {
+			        var x;
+			        try {
+			                x=new ActiveXObject("Msxml2.XMLHTTP");
+			        } catch (e) {
+			                try {
+			                        x=new ActiveXObject("Microsoft.XMLHTTP");
+			                } catch (oc) {
+			                        x=null;
+			                }
+			        }      
+			        if(!x && typeof XMLHttpRequest != "undefined")
+			                x = new XMLHttpRequest();
+			        if (x)
+			                return x;
+		}
+	};
+
+
+/**
+ * MJM 
+ * 
+ * Objeto CyberbankAPI
+ *
+ * Usage: CyberBankAPI.metodo();
+ */	
+
+CyberBank.callbacks={};
+
+CyberBank.callbacks = {
+    
+    updateSucursalesCombo: function(response){
+    
+    	var obj = document.getElementById('logicalBranchId');
+    	
+    	if(isIE){
+    		CyberBank.utils.agregaOptionEnIE(response , obj);
+    	}	
+    	else{
+    		if (obj != null) { 
+	    		obj.innerHTML = response;
+    		}
+    	}   		
+    }
+};
+
+/**
+ * MJM
+ * 
+ * Objeto que aplica mascaras a float fields.
+ * 
+*/
+
+
+/** ********* Session timeout ****************** */
+
+/**
+ * Class to track session duration and warn user when close to expiring.
+ * Defaults to showing warning after 25 mins, auto logging out after a further 2
+ * mins. Threasholds can be modified by passing new values as the optional 4th
+ * constructor parameter, e.g. { timout: 20, kickout: 5}
+ * 
+ * @author hzerrizuela
+ */
+var TimeoutManager = function(userType, sponsorCode, path, opt) {
+
+	var opt = opt ? opt : {};
+		
+	// check we have a userType, default to 'password'
+	userType = userType ? userType : "password";
+	
+	// Timeout duration (mins)
+	var timeout = opt.timeout ? opt.timeout : 55;
+	var logoutMS = timeout * 60000;
+	
+	// Time between displaying prompt and terminating session (mins)
+	var dialogDuration = opt.kickout ? opt.kickout : 2;
+	var dialogMS = logoutMS - (dialogDuration * 60000);
+	
+	// Last activity time check interval (default 1 minute)
+	var checkInterval = opt.checkInterval ? opt.checkInterval : 1;
+	var checkIntervalMS = checkInterval * 60000;
+	
+	// Variable to hold the interval, allowing it to stopped
+	var timeoutInterval;
+	
+	
+	// various action paths
+	var timeoutPath = $("#timeoutURL").val();
+	var logoutPath = $("#appContext").val() + "/index?seleccion=logout";
+	var homePath = $("#appContext").val() + "/keepAlive";
+	
+		
+	// Private methods
+	var startTimeout = function() {
+		//alert('hhzv: Entre a startTimeout');
+		// Make sure interval is clear first
+		clearInterval(timeoutInterval);
+		$.cookie("timeout", new Date().getTime()); //This creates a new cookie.
+		timeoutInterval = setInterval(checkTimeout, checkIntervalMS);
+	};
+	
+	// Checks the timeout cookie and triggers dialog when 
+	var checkTimeout = function() {
+		//alert('Entre al checktimeout');
+		// Get session time from cookie, convert to Int to stop string concatenation with '+'
+		var lastSessionAction =  parseInt($.cookie("timeout"));
+		
+		var timeoutTime = lastSessionAction + logoutMS;
+		
+		var dialogTime = lastSessionAction + dialogMS;
+		
+		var now = new Date().getTime();
+				
+			
+		// If timeoutTime has passed the timeout has expired - log out
+		if(timeoutTime < now) {
+			//alert('Usuario kicked: timeoutTime < now');
+			kick();
+		} else if (opt.redirect=='false'){
+			$('#kickMessage').jqmHide();
+
+		}
+	};
+	
+		
+	// Asynchronously get the sign-off action to ensure session is killed,
+	// then redirect to timeout screen
+	var kick = function() {		
+		if (opt.redirect!='false') {
+			clearInterval(timeoutInterval);
+			//console.log('kickeando usuario.... TimeoutPath = ' + timeoutPath);
+			if ($("#isRelativeTimeout").val() == 'true') {
+				if (timeoutPath.search(/.*sso.*/) != -1) { //If timeoutPath contains 'sso', call reload on the parent, to avoid menu inside the frame...
+					closeSesionTimeOut();
+					CyberBank.sessionTimeOut = true;
+					return;
+				}
+			}
+			//For external urls:
+			closeSesionTimeOut();
+			CyberBank.sessionTimeOut = true;
+			
+		} 
+	};
+	
+	var closeSesionTimeOut = function(){
+
+     	var uuID = $("#uuid").val();
+	   	var parameters = 'uuid='+uuID;
+	   		   	
+   	    CyberBank.qualtrics.addSessionStorageProp("user.cierreSesion","1");
+        CyberBank.qualtrics.addSessionStorageProp("user.tipoCierre","1");
+
+	   	var dataToSend="";
+		if (CyberBank.encryption.enable) {
+			var p_temp = getRandomPassword();
+			parameters = JSON.stringify(createSecureRequest(parameters, p_temp));
+			dataToSend = {parameters : parameters}
+		}else{
+			dataToSend = parameters;
+		}
+	   	$.ajaxInvoker({
+			  data: dataToSend,
+			  url: "logout",
+			  type: "POST",
+	  		  async:false,
+			  success: function(data) {
+				return true;
+			  }
+			});    
+
+}
+	// Return an object exposing public methods
+	
+	return {
+		init: function() {
+			startTimeout();
+		}
+	}; 
+};
+
+CyberBank.encryption = {
+		
+	    enable : false 
+	    
+	};
+
+CyberBank.specialCharsFilter = {
+		
+	    listChars : []
+	    
+	};
+CyberBank.esCompra = {
+		
+	    esCompra : false,
+	    debito : false,
+	    credito : false
+	    
+	};
+
+CyberBank.stateFocus = {
+	    actualState : "",
+	    previousState : "",
+	    elemenWithFocus: ""
+	};
+
+CyberBank.sessionTimeOut = false;
+
+//tiempo de recarga de la pantalla de login expresado en segundos 
+CyberBank.reloadTimeout= 1000;
+
+CyberBank.gtm = {
+		
+	    setEventAttrDataLayer: function(event, attr, value){
+	    	if (this.enable){
+	    		this.getEventDataLayer(event)[attr] = value;
+	    	}
+	    },
+	    
+	    deleteAttrDataLayer: function(attr){
+	    	if (this.enable){
+	    		delete	window.dataLayer[attr];
+			}
+	    },
+	    
+	    setBasicAttrDataLayer: function(attr,value){
+	    	if (this.enable){
+	    		window.dataLayer[0][attr]= value;
+	    	}
+	    },
+	    
+	    deleteBasicAttrDataLayer: function(attr){
+	    	if (this.enable){
+	    		delete	window.dataLayer[0][attr];
+			}
+	    },
+	    
+	    incrCountEventDataLayer: function(event, countId){
+	    	if (this.enable){
+                var event_count = this.getEventDataLayer(event)[countId];
+	    		if(event_count!= undefined){	
+	    			this.getEventDataLayer(event)[countId] = event_count + 1;
+	    		}else{
+	    			this.getEventDataLayer(event)[countId] = 1;
+	    		}
+	    			
+			}
+	    },
+	    
+	    pushEventDataLayer: function(event){
+	    	if (this.enable){
+	    		window.dataLayer.push(event);
+	    	}
+	    },
+	    
+	    getEventDataLayer: function(eventName){
+	    	if (this.enable){
+                var cont=0
+	    		for(cont=0; cont < window.dataLayer.length; cont++){
+	    			var event_name = window.dataLayer[cont].event;
+	    			if(event_name != undefined && event_name == eventName){
+	    				return window.dataLayer[cont];
+	    			}
+	    		}
+                window.dataLayer.push({event:eventName});
+                return window.dataLayer[cont];
+	    	}
+	    },
+
+
+        getObjectDataLayer: function(key, value){
+	    	if (this.enable){
+                var cont=0
+	    		for(cont=0; cont < window.dataLayer.length; cont++){
+	    			var key_value = window.dataLayer[cont][key];
+	    			if(key_value != undefined && key_value == value){
+	    				return window.dataLayer[cont];
+	    			}
+	    		}
+                var obj = {};
+                obj[key] = value;
+                window.dataLayer.push(obj);
+                return window.dataLayer[cont];
+	    	}
+	    },
+	    
+	    getObjectWithKeyDataLayer: function(key){
+	    	if (this.enable){
+                var cont=0
+	    		for(cont=0; cont < window.dataLayer.length; cont++){
+	    			var key_value = window.dataLayer[cont][key];
+	    			if(key_value != undefined){
+	    				return window.dataLayer[cont];
+	    			}
+	    		}
+                var obj = {};
+                obj[key] = '';
+                window.dataLayer.push(obj);
+                return window.dataLayer[cont];
+	    	}
+	    },
+	    
+	    
+	    enable : false 
+		
+	};
+
+CyberBank.qualtrics = {
+		
+	    addSessionStorageProp: function(key, value){
+	    	if (this.enabled){
+	    		window.sessionStorage.setItem(key, value);
+	    	}
+	    },
+	    
+	    addSessionStorageTransaction: function(value){
+	    	if (this.enabled){
+	    		let transactionList = window.sessionStorage.getItem("user.transactions");
+	    		if(transactionList){
+	    			if(transactionList.indexOf(value)<0){
+	    				transactionList += "," + value;  
+	    			}
+	    		}else{
+	    			transactionList = value;
+	    		}
+	    		window.sessionStorage.setItem("user.transactions", transactionList);
+	    		$("#lastTransaction").val("Adhesion-OK");
+	    	}
+	    },
+	    
+	    InterceptReload: function(){
+	    	
+	    	if (this.enabled){
+				
+			/**
+			 * Se definen los siguientes campos para el uso del directorio de Qualtrics
+			 */
+				QSI.config = {
+	                externalReference: sessionStorage.getItem("user.entityMis"),
+					firstName: sessionStorage.getItem("user.nombre"),
+	                lastName: sessionStorage.getItem("user.apellido")
+        		};
+        		
+	    		QSI.API.unload();
+	    		QSI.API.load();
+	    	}
+	    },
+	    
+	    clearSession: function(){
+	    	if (this.enabled){
+		    	let keys = [];
+		    	for (var i = 0; i < window.sessionStorage.length; i++) {
+		    		let key =   window.sessionStorage.key(i);
+		    		
+		    		if(key.indexOf("user.")==0){
+		    			keys.push(key);
+		    			}
+		    		}
+		    	for (var i = 0; i < keys.length ; i++){
+		    		window.sessionStorage.removeItem(keys[i]);
+		    	}
+	    	}
+	    },
+	    
+	    enabled:false
+};
+
+CyberBank.IS = {
+		
+	    setUserData: function(userId, userEmail, userCell){
+	    	if (this.enabled){
+	    		interactionStudioExperienceCloudHelpers.userData = {id:userId, email: userEmail, cell: userCell};
+	    	}
+	    },
+	    setTransactionData: function(trxData){
+	    	if (this.enabled){
+	    		this.transactionData = trxData;
+	    	}
+	    },
+	    clearData: function(){
+	    	if (this.enabled){
+	    		this.action = "";
+	    		this.transactionData={};
+	    		interactionStudioExperienceCloudHelpers.userData = {};
+	    	}
+	    },
+	    initData: function(accountConf, datasetConf, cookiedomainConf, trackerUrlConf, evergageUrlConf){
+	    	if (this.enabled){
+	    		this.account = accountConf;
+	    		this.dataset=datasetConf;
+	    		this.cookiedomain=cookiedomainConf;
+	    		this.trackerUrl=trackerUrlConf;
+	    		this.evergageUrl=evergageUrlConf;
+	    	}
+	    },
+	    
+	    transactionData: {},
+	    action:"",
+	    enabled: false,
+	    account: "",
+	    dataset: "",
+	    cookiedomain: "",
+	    trackerUrl: "",
+	    evergageUrl: ""
+};
+
+CyberBank.remoteConfig = {
+		
+		params : new Map(),
+		
+		init : function(defaultParams){
+			for (const property in defaultParams) {
+				CyberBank.remoteConfig.params.set(property, defaultParams[property]);
+			}
+		}
+	};

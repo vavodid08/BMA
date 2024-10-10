@@ -1,0 +1,65 @@
+
+
+
+function submitColapsableSection(sectionID, isHidden){
+	
+	//------seteo de estilos "loading"-------
+	var background = $('#'+sectionID+"_arrowButton").css("background");
+	var color = $('#'+sectionID+"_arrowButton").css("color");
+	$('#'+sectionID+"_arrowButton").css( "background", background );
+	$('#'+sectionID+"_arrowButton").css( "color", color );
+	$('#'+sectionID+"_arrowButton").css( "background-image", "url('images/general/refreshTabla.gif')" );
+	//-------fin seteo de estilos "loading"
+	
+	$('#'+sectionID+"_arrowButton").attr('onclick','').unbind('click');
+	
+	var uuid = $('#uuid').val();
+	var contexto = $('#IDContexto').val();
+	var functOnClick;
+	var $this = $('#'+sectionID);
+	events = $this.data('events');
+	if( events && events['click'] ){
+	  $.each( events['click'], function(){
+	   functOnClick=this;
+	});
+	}
+
+	/*Paso como parametro los items seleccionados*/
+  	var params = encodeForm(getDocumentIDForm()).split('&');
+  	var selectedItems = '';
+  	for (var i = 0; i < params.length; i++) {
+  		var param = params[i].split('=');
+  		if (param.length > 1 && param[0].indexOf("encodedcollection_") === 0) {
+  			selectedItems = selectedItems + params[i] + "&";
+  		}
+  	}
+  	var parameters = 'uuid=' + uuid + '&IDContexto=' + contexto;
+	
+	var dataToSend="";
+	if (CyberBank.encryption.enable) {
+		var p_temp = getRandomPassword();
+		parameters = JSON.stringify(createSecureRequest(parameters, p_temp));
+		dataToSend = {parameters : parameters}
+	}else{
+		dataToSend = parameters;
+	}
+	
+	$.ajaxInvoker({
+		type: 'POST',
+		url: 'section/concealable.do',
+		headers: { 'Content-type': 'application/x-www-form-urlencoded', 'sectionId' : sectionID, 'isHidden': isHidden, 'selectedItems': selectedItems },
+		data: dataToSend,
+		async: true
+	}).done(function(data, textStatus, resp) {
+
+			var respText = data;
+			if (CyberBank.encryption.enable) {
+				respText = resolveSecureResponse(data, p_temp);
+			}
+			
+			$("#"+sectionID).parent().html(respText);
+	});
+}
+
+
+

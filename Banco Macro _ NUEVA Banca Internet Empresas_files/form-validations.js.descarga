@@ -1,0 +1,124 @@
+/**
+ * Script for FORM VALIDATIONS
+ * 
+ * @author hzerrizuela
+ */
+ 
+function submitDataToForm(usernameaux) {
+	$("#login_form > input[name='usuario']").val(usernameaux);
+	$("#login_form > input[name='password']").val($("#pass_id").val());
+	$("#login_form > input[name='institution']").val($("#institutionId").val());
+	$("#login_form > input[name='logicalBranch']").val($("#logicalBranchId").val());
+	$("#login_form > input[name='languageChoose']").val($("#languageChooseId").val());
+	$("#login_form > input[name='uuid']").val($("#uuid").val());
+	$("#login_form").submit();
+}
+
+/**
+ * This function must only be called only from login page
+ */
+function submitLoginEnter(e) {
+	var keycode = e.which;
+	
+	if (keycode == 13) {
+		checkEntry();
+	}
+}  
+
+
+/**
+ * Prevents from executing the transaction if the 'default' value of the combo was selected.
+ * 
+ */
+function verifyNoneSelectionAndSubmit(element) {
+	if (!isMandatory(element)) {
+		if (isBlank(element.value)) {
+			return false;  
+		}
+	}	
+	return true;
+}
+
+
+function isBlank(formElementValue) {
+	return formElementValue == 'Ninguno' || formElementValue == '';
+}
+
+function isMandatory(formElement) {
+	return (formElement.getAttribute('required') == 'true'||formElement.getAttribute('required') == 'required');
+}
+
+function isFloatField(formElementID) {
+	return $("#"+formElementID).attr("datatype") == "float"; 
+}
+
+function isIntField(formElementID) {
+	return $("#"+formElementID).attr("datatype") == "int";
+}
+
+function isNumeric(formElementID) {
+	return isIntField(formElementID) || isFloatField(formElementID);
+}
+
+/**
+ * Returns an object containing all the elements that should be validated for certain button
+ * Example of dependencies attribute:
+ * "actionButton0_containsElements:false, radioButtonField310_containsElements:false, section1_containsElements:true"
+ */
+function getValidationElems(elemId, formID) {
+	var button = $("#" + elemId);
+	var dummyObject = new Object();
+	var dependencies = button.attr('dependencies');
+
+	if (dependencies === undefined || dependencies == '') {
+		return document.getElementById(formID);
+	}
+	
+	dummyObject.elementWrapper = true;	
+	dummyObject.elements = new Array();
+	var arrayDep = dependencies.split(",");
+	
+	for(var i = 0; i < arrayDep.length; i++) {
+		var arraySeparated = arrayDep[i].split("_");
+		var booleanValue = arraySeparated[1].split(":")[1];
+		var elemID = $.trim(arraySeparated[0]);
+		var element = $("#" + elemID);  
+//		var $allExtra = $("input[id^='extraField_']"); //extra fields for radio
+//		$allExtra.each(function() {
+//			dummyObject.elements.push($(this));
+//		});
+		
+		if(element.attr('name')== 'radioButtonContainer'){
+			dummyObject.elements.push(element);
+		}
+		if (booleanValue == 'false') {
+			if (element.prop('type') === undefined) {
+				continue;
+			} 
+			dummyObject.elements.push(element);
+		} else { //drill down section
+			var $allInputs = $('input'); //radio, checkbox, hidden, text fields
+			var $allSelects = $('select'); //select fields
+			var $allTextAreas = $('textarea'); //textareas
+			
+			element.find($allInputs).each(function() {
+				if( $(this).closest(".hiddenSection").length == 0 ) {
+					dummyObject.elements.push($(this));
+				}
+			});
+			element.find($allSelects).each(function() {
+				if( $(this).closest(".hiddenSection").length == 0) {
+					dummyObject.elements.push($(this));
+				}
+			});
+			element.find($allTextAreas).each(function() {
+				if( $(this).closest(".hiddenSection").length == 0 ) {
+					dummyObject.elements.push($(this));
+				}
+			});
+		}	
+		
+	}
+	
+	return dummyObject;
+}

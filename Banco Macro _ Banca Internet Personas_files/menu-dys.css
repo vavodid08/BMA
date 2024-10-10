@@ -1,0 +1,1398 @@
+/**************************************/
+/****** TRAIDO DE main.css ************/
+/**************************************/
+.clear {
+    clear: both;
+}
+/*************************************/
+#menu-dys.menu-dys.menuFoodGM li:nth-child(3) {
+    width: 107px;
+}
+#menu-dys.menu-dys.menuFoodGM li:nth-child(3):hover, #menu-dys.menu-dys.menuFoodGM li:nth-child(4):hover {
+    width: 103px;
+}
+#header #menu-dys.menu-dys.menuFoodGM li:nth-child(3) a {
+    padding-top: 10px;
+}
+#menu-dys.menu-dys.menuFoodGM li:nth-child(4) {
+    width: 107px;
+}
+#menu-dys.menu-dys.menuFoodGM li:nth-child(4) a {
+    padding-top: 10px;
+}
+
+/*
+.clearfix {
+    clear: both;
+}
+.destacados_header {
+    clear: both;
+    float: right;
+    height: 24px;
+}
+.destacados_header .titulo {
+    background: url("../img/bck/destacados_header.jpg") no-repeat scroll left center transparent;
+    border: 0 none;
+    padding-left: 20px;
+}
+.destacados_header li {
+    border-left: 1px solid #CCCCCC;
+    float: left;
+    padding: 1px 10px;
+}
+.destacados_header li:nth-child(2) {
+    border: 0 none;
+    padding-left: 0;
+}
+.destacados_header li.primero {
+    border: 0 none;
+    padding-left: 0;
+}
+.destacados_header .sel {
+    background: none repeat scroll 0 0 #D5E5F7;
+    border-radius: 4px 4px 4px 4px;
+    padding: 2px 10px;
+}
+.visita_outlet {
+    background: url("../img/bck/icn_nuevo.png") no-repeat scroll 0 0 transparent;
+    float: left;
+    height: 35px;
+    position: absolute;
+    right: -15px;
+    text-indent: -999999px;
+    top: -10px;
+    width: 41px;
+    z-index: 99999;
+}
+#header .drop .sub {
+    background: url("../img/bck/bck_dropdown_up.png") no-repeat scroll left top transparent;
+    float: left;
+    padding: 20px 0 0 20px;
+    width: 190px;
+}
+#header .drop .sub li {
+    background: none repeat scroll 0 0 transparent;
+    border-bottom: 1px solid #CCCCCC;
+    padding: 3px 0;
+    width: 170px;
+}
+#header .drop .sub li.last, #header .drop .sub li:last-child {
+    border-bottom: 0 none;
+}
+*/
+
+.menu-dys ul.root {
+    background: url("../images/tabs/bck_menu2.png") repeat-x scroll left bottom #1974CE;
+    border-radius: 4px 4px 4px 4px;
+    border-right: 1px solid #DEE0E3;
+    display: block;
+    float: left;
+    height: 50px;
+    position: relative;
+    width: 960px;
+    z-index: 10;
+}
+.menu-dys li.mega {
+    background: none repeat scroll 0 0 transparent;
+    float: left;
+    height: 50px;
+    padding: 0;
+    position: static;
+    width: 88px;
+    z-index: 100;
+}
+/*
+.menu-dys li:hover {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-color: #247BD0 #247BD0 #FFFFFF;
+    border-style: solid;
+    border-width: 2px;
+    color: #247BD0;
+    width: 84px;
+}
+
+.menu-dys li.primero {
+    border: 0 none;
+    width: 135px;
+}
+.menu-dys li:hover .title-food {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: medium none;
+    color: #247BD0;
+    cursor: default;
+    height: 40px;
+    padding: 4px 9px 0 7px;
+    position: relative;
+    z-index: 10000 !important;
+}
+*/
+.menu-dys li .title-food {
+    border-left: 1px solid #4098EF;
+    border-right: 1px solid #247BD0;
+    color: #FFFFFF;
+    cursor: default;
+    float: left;
+    font-size: 13px;
+    height: 30px;
+    line-height: 13px;
+    margin-top: 7px;
+    overflow: hidden;
+    padding: 5px 10px 1px;
+    text-align: center;
+    text-indent: 0;
+    width: 68px;
+}
+/*
+.menu-dys li:hover a {
+    border-left: 0 none !important;
+    border-right: 0 none;
+    padding: 5px 24px 1px;
+    position: relative;
+    z-index: 4 !important;
+}
+*/
+.menu-dys li.primero + li {
+    width: 105px;
+}
+.menu-dys li.primero + li .title-food {
+    border-left: 0 none;
+    width: 85px;
+}
+.menu-dys li.primero + li:hover {
+    width: 101px;
+}
+.menu-dys li.primero + li:hover .title-food {
+    width: 85px;
+}
+.menu-dys li.primero + li + li + li + li + li + li + li + li .title-food {
+    height: 22px;
+    padding-bottom: 0;
+    padding-top: 12px;
+}
+.menu-dys li.primero + li + li + li + li + li + li + li + li:hover .title-food {
+    padding-bottom: 8px;
+}
+.menu-dys li.primero + li + li + li + li + li + li + li + li + li .title-food {
+    border-right: 0 none;
+    width: 80px;
+}
+.menu-dys li.primero + li + li + li + li + li + li + li + li + li:hover {
+    width: 96px;
+}
+.menu-dys li.primero + li + li + li + li + li + li + li + li .sub-menu .seccion, .menu-dys li.primero + li + li + li + li + li + li + li + li + li .sub-menu .seccion {
+    float: right;
+}
+.menu-dys li.nth-child-2 {
+    width: 105px;
+}
+.menu-dys li.nth-child-2:hover {
+    width: 101px;
+}
+.menu-dys li.nth-child-2 .title-food {
+    width: 85px;
+}
+.menu-dys .nth-child-9 .title-food {
+    height: 22px;
+    padding-bottom: 0;
+    padding-top: 12px;
+}
+.menu-dys li.nth-child-9:hover .title-food {
+    padding-bottom: 8px;
+}
+.menu-dys li.nth-child-2:hover .title-food {
+    width: 85px;
+}
+.menu-dys li.nth-child-10:hover {
+    width: 96px;
+}
+.menu-dys li.nth-child-10 .title-food {
+    border-right: 0 none;
+    width: 80px;
+}
+.menu-dys li.nth-child-10:hover .title-food {
+    border: 0 none;
+}
+/*
+.menu-dys a.todos-food {
+    background: url("../img/bck/bck_menu3.png") repeat scroll left top #FDBE3A;
+    border-radius: 4px 0 0 4px;
+    color: #FFFFFF;
+    float: left;
+    padding: 12px 5px;
+    text-align: center;
+    text-shadow: 1px 1px 0 #999999;
+    width: 125px;
+}
+.menu-dys a.todos-food span {
+    background: url("../img/bck/flecha_menu.png") no-repeat scroll right -4px transparent;
+    font-size: 13px;
+    font-weight: 900;
+    padding: 0 14px;
+}
+.menu-dys a:hover, .menu-dys li.hover a, .menu-dys li:hover a {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 0 none !important;
+    color: #1A75CF;
+    margin: 7px 0;
+    position: relative;
+    text-decoration: none;
+}
+*/
+
+/*
+.menu-dys li:hover a.todos-food {
+    background: none repeat scroll 0 0 #003A9D;
+    color: #FFFFFF;
+    margin: 0;
+    overflow: visible;
+    padding: 12px 5px;
+    position: relative;
+    text-shadow: 1px 1px 0 #000000;
+}
+.menu-dys ul .primero:hover ul li a {
+    background: url("../img/bck/icn_arrow_gray.png") no-repeat scroll left 4px transparent !important;
+    border-right: 0 none;
+    margin: 2px 0;
+    text-decoration: none;
+}
+.menu-dys ul .primero ul li a:hover {
+    background: url("../img/bck/icn_arrow_gray.png") no-repeat scroll left 4px transparent !important;
+    color: #FECF6C;
+    margin: 2px 0;
+    text-decoration: none;
+}
+#menu-dys .primero:hover .drop {
+    display: block;
+}
+#header ul li .drop {
+    background: url("../img/bck/bck_dropdown_down.png") no-repeat scroll left bottom transparent;
+    display: none;
+    left: -5px;
+    padding: 0 0 8px;
+    position: absolute;
+    top: 38px;
+    width: 220px;
+    z-index: 999;
+}
+.menu-dys .all-depa .sub a {
+    background: url("../img/bck/icn_arrow_gray.png") no-repeat scroll left 4px transparent !important;
+    border: medium none;
+    color: #1972CC;
+    display: block;
+    float: none;
+    font-size: 13px;
+    height: auto;
+    margin: 2px 0;
+    padding: 2px 11px;
+    width: 145px;
+}
+.menu-dys .sub a:hover {
+    color: #F8B131;
+}
+.menu-dys .all-depa .sub li:hover {
+    -moz-border-bottom-colors: none;
+    -moz-border-image: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    border-color: -moz-use-text-color -moz-use-text-color #CCCCCC;
+    border-style: none none solid;
+    border-width: 0 0 1px;
+}
+*/
+.menu-dys .all-depa .sub li:last-child:hover, .menu-dys .all-depa .sub li.last:hover {
+    border: 0 none;
+}
+.sub-menu {
+	-moz-border-bottom-colors: none;
+    -moz-border-image: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background: none repeat scroll 0 0 white;
+    border: 1px solid #2274C5;
+    border-color: #FFFFFF #CCCCCC #CCCCCC;
+    border-radius: 0 0 5px 5px;
+    border-right: 1px solid #CCCCCC;
+    border-style: solid;
+    border-width: 0 1px 1px;
+    display: block;
+    left: 0;
+    padding: 0 0 8px;
+    position: absolute;
+    top: 31px;
+    z-index: 999;
+}
+
+.menu-dys ul li.hover .sub-menu, .menu-dys ul li:hover .sub-menu {
+    display: block;
+}
+.menu-dys ul.root li .sub-menu .sub li {
+    margin-left: 2px;
+    padding: 1px 0 !important;
+    top: 0 !important;
+}
+.menu-dys .sub-menu .sub {
+    background: none repeat scroll 0 0 transparent;
+    padding-left: 20px;
+    padding-top: 0;
+}
+#header .sub-menu .sub li {
+    border: 0 none;
+    width: 180px;
+}
+.menu-dys .secciones {
+    float: left;
+    width: 210px;
+    text-align: left;
+}
+.menu-dys .sub-menu .seccion {
+    float: left;
+    padding: 1px;
+    padding-left: 11px;
+    width: 196px;
+}
+
+/* Falabella */
+
+ul.main-ul div.secciones div.seccion li:hover {
+	background-color: #005030;
+}
+
+ul.main-ul div.secciones div.seccion li span:hover {
+	background-color: #fff;
+}
+
+
+.sub-menu .sub li a {
+    border-right: 0 none !important;
+    color: #888888;
+    display: block;
+    font-size: 11px;
+    font-weight: 100 !important;
+    height: auto;
+    line-height: 12px;
+    margin: 0;
+    padding: 0 0 0 10px !important;
+    text-align: left;
+    width: auto;
+}
+.menu-dys ul li:hover .food a {
+    background: none repeat scroll 0 0 transparent !important;
+    border: medium none;
+    color: #FECF6C;
+    margin: 0;
+}
+.menu-dys .seccion .titulo_seccion {
+    color: #008441;
+    cursor: default;
+    display: block;
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 13px;
+    font-weight: bold;
+    height: 19px;
+    margin: 0;
+    padding: 5px 0 0 0px;
+    text-transform: inherit;
+    white-space: normal;
+}
+
+.menu-dys .seccion .titulo_seccion img {
+    margin: 2px 0 -4px;
+    padding: 1px 4px 1px 0;
+}
+.menu-dys.electro {
+    margin-top: -2px;
+    margin-bottom: 20px;
+    white-space: nowrap;
+}
+.electro .sub-menu .sub {
+    padding-left: 0;
+}
+/*
+#menu-dys.electro ul li .title-food:hover, #menu-dys.electro ul li .titulo_seccion:hover {
+    color: #F8B131;
+    cursor: pointer;
+}*/
+.electro ul li.primero {
+    border: 0 none;
+    width: 97px;
+}
+.electro ul li a.todos-food {
+    background: url("../img/bck/btn-supermercado.png") no-repeat scroll left top #26A8FF;
+    height: 26px;
+    text-indent: -99999em;
+    width: 87px;
+}
+.electro ul li a.todos-food:hover {
+    background: url("../img/bck/btn-supermercado.png") no-repeat scroll left -50px #2DB8FF;
+}
+.electro li .title-food {
+    height: 24px;
+    padding: 11px 10px 2px;
+}
+.electro li:hover .title-food {
+    height: 35px;
+    padding: 11px 10px 2px;
+}
+.electro ul li.segundo {
+    width: 86px;
+}
+.electro ul li.segundo:hover {
+    width: 82px;
+}
+.electro ul li.segundo .title-food {
+    border-left: 0 none;
+    width: 65px;
+}
+.electro ul li.segundo:hover .title-food {
+    width: 62px;
+}
+.electro li.segundo + li {
+    width: 99px;
+}
+.electro li.segundo + li:hover {
+    width: 95px;
+}
+.electro li.segundo + li .title-food {
+    width: 77px;
+}
+.electro li.segundo + li:hover .title-food {
+    width: 75px;
+}
+.electro li.segundo + li + li {
+    width: 93px;
+}
+.electro li.segundo + li + li:hover {
+    width: 89px;
+}
+.electro li.segundo + li + li .title-food {
+    width: 71px;
+}
+.electro li.segundo + li + li:hover .title-food {
+    width: 69px;
+}
+.electro li.segundo + li + li + li {
+    width: 84px;
+}
+.electro li.segundo + li + li + li:hover {
+    width: 80px;
+}
+.electro li.segundo + li + li + li .title-food {
+    width: 62px;
+}
+.electro li.segundo + li + li + li:hover .title-food {
+    width: 60px;
+}
+.electro li.segundo + li + li + li + li {
+    width: 94px;
+}
+.electro li.segundo + li + li + li + li:hover {
+    width: 90px;
+}
+.electro li.segundo + li + li + li + li .title-food {
+    padding: 5px 10px 8px;
+    width: 72px;
+}
+.electro li.segundo + li + li + li + li:hover .title-food {
+    width: 70px;
+}
+.electro li.segundo + li + li + li + li + li {
+    width: 82px;
+}
+.electro li.segundo + li + li + li + li + li:hover {
+    width: 78px;
+}
+.electro li.segundo + li + li + li + li + li .title-food {
+    padding: 5px 10px 8px;
+    width: 60px;
+}
+.electro li.segundo + li + li + li + li + li:hover .title-food {
+    width: 58px;
+}
+.electro li.segundo + li + li + li + li + li + li {
+    width: 70px;
+}
+.electro li.segundo + li + li + li + li + li + li:hover {
+    width: 66px;
+}
+.electro li.segundo + li + li + li + li + li + li .title-food {
+    padding: 5px 10px 8px;
+    width: 48px;
+}
+.electro li.segundo + li + li + li + li + li + li:hover .title-food {
+    width: 46px;
+}
+#header .electro li.ante-penultimo {
+    width: 78px;
+}
+#header .electro li.ante-penultimo:hover {
+    width: 74px;
+}
+#header .electro li.ante-penultimo .title-food {
+    padding: 5px 10px 10px;
+    width: 56px;
+}
+#header .electro li.ante-penultimo:hover .title-food {
+    padding-bottom: 16px;
+    width: 54px;
+}
+#header .electro li.penultimo {
+    width: 82px;
+}
+#header .electro li.penultimo:hover {
+    width: 78px;
+}
+#header .electro li.penultimo .title-food {
+    padding-bottom: 4px;
+    width: 62px;
+}
+#header .electro li.penultimo:hover .title-food {
+    width: 58px;
+}
+.electro li.ultimo {
+    width: 92px;
+}
+.electro li.ultimo:hover {
+    width: 90px;
+}
+.electro li.ultimo .title-food {
+    padding: 5px 10px 8px;
+    width: 70px;
+}
+.electro li.ultimo:hover .title-food {
+    width: 70px;
+}
+.electro li.nth-child-3 {
+    width: 99px;
+}
+.electro li.nth-child-3:hover {
+    width: 95px;
+}
+.electro li.nth-child-3 .title-food {
+    width: 77px;
+}
+.electro li.nth-child-3:hover .title-food {
+    width: 75px;
+}
+.electro li.nth-child-4 {
+    width: 93px;
+}
+.electro li.nth-child-4:hover {
+    width: 89px;
+}
+.electro li.nth-child-4 .title-food {
+    width: 71px;
+}
+.electro li.nth-child-4:hover .title-food {
+    width: 69px;
+}
+.electro li.nth-child-5 {
+    width: 84px;
+}
+.electro li.nth-child-5:hover {
+    width: 80px;
+}
+.electro li.nth-child-5 .title-food {
+    width: 62px;
+}
+.electro li.nth-child-5:hover .title-food {
+    width: 60px;
+}
+.electro li.nth-child-6 {
+    width: 94px;
+}
+.electro li.nth-child-6:hover {
+    width: 90px;
+}
+.electro li.nth-child-6 .title-food {
+    padding: 5px 10px 8px;
+    width: 72px;
+}
+.electro li.nth-child-6:hover .title-food {
+    width: 70px;
+}
+.electro li.nth-child-7 {
+    width: 82px;
+}
+.electro li.nth-child-7:hover {
+    width: 78px;
+}
+.electro li.nth-child-7 .title-food {
+    padding: 5px 10px 8px;
+    width: 60px;
+}
+.electro li.nth-child-7:hover .title-food {
+    width: 58px;
+}
+.electro li.nth-child-8 {
+    width: 70px;
+}
+.electro li.nth-child-8:hover {
+    width: 66px;
+}
+.electro li.nth-child-8 .title-food {
+    padding: 5px 10px 2px;
+    width: 48px;
+}
+.electro li.nth-child-8:hover .title-food {
+    width: 46px;
+}
+.ante-penultimo .sub-menu .seccion, .penultimo .sub-menu .seccion, .ultimo .sub-menu .seccion {
+    float: right;
+}
+.detail-food.combos-food .right-info-principal .info-product .portion .contains big {
+    color: #5F5F5F;
+}
+.content-summary.detail-food.combos-food .right-info-principal .obten-prod {
+    float: left;
+    font-size: 11px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    width: 100%;
+}
+.content-summary.detail-food.combos-food .right-info-principal .info-product {
+    padding-top: 0;
+}
+.content-summary.detail-food .right-info-principal .info-product .portion.caja-gris {
+    background: none repeat scroll 0 0 #EBEBEB;
+    margin-top: 0;
+    padding: 10px 0 10px 10px;
+    width: 280px;
+}
+.content-summary.detail-food .right-info-principal .info-product .portion.caja-gris select {
+    margin-bottom: 10px;
+}
+.content-summary.detail-food .right-info-principal .info-product .portion.caja-gris big {
+    width: 100%;
+}
+.content-summary.detail-food .right-info-principal .info-product .portion.caja-gris .contains {
+    background: url("../img/bck/bck_contains_small_disabled.png") no-repeat scroll 0 0 transparent;
+}
+.content-summary .more-info-product .left-more-info #box-products #combo-descripcion.category {
+    padding: 0 0 0 10px;
+    width: 690px;
+}
+.content-summary.detail-food.combos .info-principal .right-info-principal .info-other {
+    float: left;
+    height: auto;
+}
+#combo-descripcion .producto-des {
+    border-bottom: 1px solid #D3E9F8;
+    float: left;
+    padding: 15px 0 15px 20px;
+    width: 660px;
+}
+#combo-descripcion .producto-des big {
+    display: block;
+    float: left;
+    margin-bottom: 3px;
+    width: 100%;
+}
+#combo-descripcion .producto-des big a {
+    color: #1796CE;
+    float: left;
+    font-size: 16px;
+    font-weight: bold;
+}
+#combo-descripcion .producto-des span {
+    color: #0C608F;
+    display: block;
+    float: left;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    width: 100%;
+}
+#combo-descripcion .producto-des .cont-image {
+    float: left;
+    width: 100px;
+}
+#combo-descripcion .producto-des .detalles-right {
+    color: #2F2F2F;
+    float: left;
+}
+#combo-descripcion .producto-des .detalles-right strong {
+    display: block;
+    float: left;
+    font-size: 16px;
+    margin-bottom: 5px;
+    width: 100%;
+}
+#combo-descripcion .producto-des .detalles-right small {
+    display: block;
+    float: left;
+    margin-top: 5px;
+    width: 100%;
+}
+.detail-food .nutritional .nutricion-detalle {
+    float: left;
+    margin-bottom: 25px;
+    width: 690px;
+}
+.content-summary .more-info-product .left-more-info #box-products .nutritional .nutricion-detalle h5 {
+    color: #7F6C5E;
+    font-size: 14px;
+    font-weight: bold;
+    width: 100%;
+}
+.detail-food .nutritional .nutricion-detalle .cont-image {
+    float: left;
+    margin-left: 20px;
+    margin-top: 20px;
+    text-align: center;
+    width: 100px;
+}
+.detail-food .nutritional .nutricion-detalle .cont-image small {
+    color: #9B9B9B;
+    display: block;
+    font-weight: bold;
+    margin-top: 10px;
+    text-align: center;
+    width: 100%;
+}
+.content-summary .more-info-product .left-more-info #box-products .category.nutritional .nutricion-detalle table {
+    float: left;
+    margin: 0 0 0 30px;
+    width: 520px;
+}
+.content-summary .more-info-product .left-more-info #box-products .category.nutritional .nutricion-detalle table tr {
+    border-bottom: 2px solid #FDD8B8;
+}
+.content-summary .more-info-product .left-more-info #box-products .category.nutritional .nutricion-detalle table tr td {
+    color: #7F6C5E;
+}
+.content-summary .more-info-product .left-more-info #box-products .category.nutritional .nutricion-detalle table tr.amarillo {
+    background: none repeat scroll 0 0 #FAF3DE;
+}
+.content-summary .more-info-product .left-more-info #box-products .category.nutritional .nutricion-detalle table tr.titulo {
+    background: none repeat scroll 0 0 #FFFFFF;
+}
+.content-summary .more-info-product .left-more-info #box-products .category.nutritional .nutricion-detalle table tr td.a-1 {
+    padding-left: 15px;
+    text-align: left;
+}
+#combo-descripcion .producto-des.pack-snack .cont-image {
+    width: 40px;
+}
+.content-summary .more-info-product .left-more-info #box-products .category.nutritional .nutricion-detalle.pack-snack table {
+    width: 630px;
+}
+.mensaje-salud {
+    float: left;
+    margin: 20px 0 0 30px;
+    width: 630px;
+}
+.mensaje-salud big {
+    color: #FDBF36;
+    display: block;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 0 0 10px;
+    text-transform: uppercase;
+}
+.mensaje-salud p {
+    float: left;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+.mensaje-salud .image-right {
+    float: right;
+}
+.mensaje-salud .parrafos {
+    float: left;
+    width: 340px;
+}
+#combo-descripcion .producto-des.pack-alone span {
+    color: #333333;
+    font-weight: 100;
+    margin: 10px 0 0;
+}
+#combo-descripcion .producto-des.pack-alone small {
+    display: block;
+    float: left;
+    font-size: 11px;
+    margin-bottom: 10px;
+    width: 100%;
+}
+#combo-descripcion .producto-des.pack-alone .important {
+    color: #2F2F2F;
+    display: block;
+    float: left;
+    font-size: 18px;
+    margin-bottom: 5px;
+    width: 100%;
+}
+#combo-descripcion .producto-des.pack-alone .ingredientes {
+    font-size: 13px;
+}
+#combo-descripcion .producto-des.box-con-image small {
+    display: block;
+    float: left;
+    margin-bottom: 10px;
+    width: 100%;
+}
+#combo-descripcion .producto-des.box-con-image .box-image-left {
+    float: left;
+    width: 170px;
+}
+#combo-descripcion .producto-des.box-con-image .especificacion {
+    color: #444444;
+    float: left;
+    font-size: 16px;
+    font-weight: bold;
+    line-height: 20px;
+    margin: 30px 0;
+    text-align: left;
+    width: 300px;
+}
+#combo-descripcion .producto-des.box-con-image p {
+    float: left;
+    margin: 2px 0;
+    text-indent: 3px;
+    width: 100%;
+}
+#combo-descripcion .producto-des.product-lista-detalles .ticket {
+    background: url("../img/cnt/tickect-pack-snack.png") no-repeat scroll left center transparent;
+    color: #146090;
+    float: left;
+    font-size: 14px;
+    height: 25px;
+    margin: 5px 0;
+    padding-left: 40px;
+    width: 430px;
+}
+#combo-descripcion .producto-des.product-lista-detalles small {
+    float: left;
+    font-size: 12px;
+    padding: 10px 0;
+    width: 600px;
+}
+#combo-descripcion .producto-des.product-lista-detalles .tit {
+    float: left;
+    font-size: 18px;
+    font-weight: bold;
+    margin: 10px 0;
+    text-align: left;
+    width: 100%;
+}
+#combo-descripcion .producto-des.product-lista-detalles .tit em {
+    display: block;
+    font-size: 11px;
+    font-weight: bold;
+    margin: 7px 0 0;
+}
+#combo-descripcion .producto-des.product-lista-detalles ul li {
+    display: inline;
+    float: left;
+    margin: 10px;
+    padding-left: 20px;
+}
+li.fono {
+    background: url("../img/bck/bck-fono-small.png") no-repeat scroll left center transparent;
+}
+li.mail {
+    background: url("../img/bck/bck-mail-small.png") no-repeat scroll left center transparent;
+}
+#header #center #cart .items {
+    cursor: pointer;
+}
+#suggestions #quick-search {
+    background: url("../img/bck/quick_back.jpg") no-repeat scroll right top transparent;
+    float: left;
+    height: 225px;
+    width: 180px;
+}
+#suggestions #quick-search form p {
+    padding-left: 10px;
+}
+#suggestions #quick-search form textarea {
+    color: #929292;
+    font-family: Arial;
+    font-size: 1em;
+    height: 115px;
+    margin-bottom: 3px;
+    margin-left: 10px;
+    padding: 5px;
+    width: 137px;
+}
+#suggestions #quick-search form small {
+    display: block;
+    font-size: 1.2em;
+    font-weight: 900;
+    height: 20px;
+    margin: 30px 0 5px;
+    text-indent: -999999em;
+    width: 147px;
+}
+#suggestions #quick-search form input.button {
+    background: url("../img/btn/btn-lista-food-nueva.png") no-repeat scroll left top transparent !important;
+    color: #FFFFFF;
+    display: block;
+    float: left;
+    height: 23px;
+    margin: 10px 0 0 10px;
+    text-align: center;
+    width: 66px;
+}
+#suggestions #quick-search form .see-all {
+    color: #929292;
+    display: block;
+    float: left;
+    font-size: 0.9em;
+    margin-top: 10px !important;
+    text-align: center;
+    width: 85px;
+}
+.box-gourmet {
+    float: left;
+    width: 960px;
+}
+.box-gourmet h3 {
+    color: #F2791F;
+    float: left;
+    font-size: 1.8em;
+    margin-bottom: 10px;
+    width: 100%;
+}
+.banner-top {
+    background: url("../img/cnt/bg-banner-gourmet.jpg") no-repeat scroll right center #FFFFFF;
+    border-bottom: 4px solid #F7AE09;
+    float: left;
+    height: 250px;
+    margin-bottom: 10px;
+    padding: 10px 0;
+    position: relative;
+    width: 100%;
+}
+.banner-top .titulo {
+}
+.banner-top p {
+    color: #999999;
+    float: left;
+    font-size: 16px;
+    line-height: 1.3em;
+    width: 430px;
+}
+.box-gourmet .col-tips {
+    border-right: 1px solid #E7E7E7;
+    float: left;
+    height: 445px;
+    margin-top: 20px;
+    overflow: hidden;
+    padding-right: 30px;
+    width: 430px;
+}
+.box-gourmet .col-tips.border-top {
+    height: 540px;
+}
+.box-gourmet .col-tips.border-top h4 {
+    border-top: 1px solid #E7E7E7;
+    padding-top: 30px;
+    width: 430px;
+}
+.box-gourmet .col-tips.no-borde {
+    border: medium none !important;
+    padding-left: 50px;
+    padding-right: 0;
+}
+.box-gourmet .col-tips h4 {
+    color: #305F8E;
+    display: block;
+    float: left;
+    font-size: 20px;
+    font-weight: bold;
+    padding-bottom: 20px;
+    width: 368px;
+}
+.box-gourmet .col-tips .cnt-image {
+    background: url("../img/bck/back_gourt.jpg") no-repeat scroll left top transparent;
+    float: left;
+    height: 200px;
+    width: 240px;
+}
+.box-gourmet .col-tips .cnt-image img {
+    float: left;
+    margin: 15px 0 0 11px;
+}
+.box-gourmet .col-tips span {
+    background: url("../img/cnt/icn.png") no-repeat scroll left top transparent;
+    color: #928991;
+    float: left;
+    font-weight: bold;
+    margin: 10px 0 7px;
+    padding: 4px 0 0 10px;
+    width: 160px;
+}
+.box-gourmet .col-tips ul {
+    float: left;
+    width: 165px;
+}
+.box-gourmet .col-tips ul li {
+    background: url("../img/cnt/bullet-ingredientes.png") no-repeat scroll left 5px transparent;
+    float: left;
+    margin-bottom: 7px;
+    margin-left: 10px;
+    margin-top: 2px;
+    padding-left: 10px;
+    width: 100%;
+}
+.box-gourmet .col-tips ul li a {
+    color: #000000;
+    text-decoration: underline;
+}
+.box-gourmet .col-tips small {
+    color: #BA8342;
+    float: left;
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    padding: 4px 0;
+    width: 100%;
+}
+.box-gourmet .col-tips p {
+    float: left;
+    font-size: 13px;
+    line-height: 1.2em;
+    width: 100%;
+}
+.box-gourmet .col-tips.full {
+    border-right: 0 none;
+    border-top: 1px solid #E7E7E7;
+    float: left;
+    height: auto;
+    margin-right: 0;
+    margin-top: 20px;
+    padding: 20px 0 10px;
+    width: 960px;
+}
+.box-gourmet .col-tips.full h4 {
+    height: 30px;
+    width: 923px;
+}
+.box-gourmet .col-tips.full .box-ingredientes {
+    border-right: 1px solid #E7E7E7;
+    float: left;
+    padding: 0 20px;
+    width: 180px;
+}
+.box-gourmet .col-tips.full .box-ingredientes span {
+    width: 100%;
+}
+.box-gourmet .col-tips.full .box-preparacion {
+    float: left;
+    padding: 0 0 0 25px;
+    width: 450px;
+}
+.box-gourmet #cont-pag {
+    clear: both;
+    position: relative;
+}
+.box-gourmet .pagi-rece {
+    height: 500px;
+    overflow: hidden;
+    position: relative;
+    width: 941px;
+}
+.box-gourmet .pagi-rece .pag-rece {
+    position: absolute;
+    width: 20000em;
+}
+.box-gourmet .item-rece {
+    float: left;
+}
+.box-gourmet #cont-pag .nextPage, .box-gourmet #cont-pag .prevPage {
+    bottom: 0;
+}
+.box-gourmet #cont-pag .nextPage {
+    background: url("../img/btn/btn_carrusel_next_blue.png") no-repeat scroll center 5px transparent;
+    height: 10px !important;
+    min-height: 20px;
+    width: 10px;
+}
+.box-gourmet #cont-pag .nextPage:hover {
+    background: url("../img/btn/btn_carrusel_next_blue.png") no-repeat scroll center bottom transparent;
+}
+.box-gourmet #cont-pag .prevPage {
+    background: url("../img/btn/btn_carrusel_prev_blue.png") no-repeat scroll center 5px transparent;
+    height: 10px !important;
+    min-height: 20px;
+    width: 10px;
+}
+.box-gourmet #cont-pag .prevPage:hover {
+    background: url("../img/btn/btn_carrusel_prev_blue.png") repeat scroll center bottom transparent;
+}
+.box-gourmet .pages-rece {
+    padding-top: 10px;
+    text-align: center;
+}
+.box-gourmet .pages-rece a {
+    border: 1px solid #1A75CF;
+    cursor: pointer;
+    margin: 0 1em;
+    padding: 0 5px;
+}
+.box-gourmet .pages-rece a.active {
+    background: none repeat scroll 0 0 #1A75CF;
+    color: #FFFFFF;
+    font-weight: bold;
+}
+.browse.disabled, .nextPage-special.disabled, .prevPage-special.disabled, .prevPage.disabled, .nextPage.disabled {
+    cursor: default;
+    opacity: 0.3;
+}
+.menu-dys li.primero {
+    border: 0 none;
+    width: 110px;
+}
+.menu-dys a.todos-food span {
+    background: url("") no-repeat scroll right -4px transparent;
+    font-size: 13px;
+    font-weight: 900;
+    padding: 0 3px;
+}
+.menu-dys a.todos-food {
+    background: url("../img/bck/bck_menu3.png") repeat scroll left top #FDBE3A;
+    border-radius: 4px 0 0 4px;
+    color: #FFFFFF;
+    float: left;
+    padding: 12px 5px;
+    text-align: center;
+    text-shadow: 1px 1px 0 #999999;
+    width: 100px;
+}
+.menu-dys li.mega {
+    background: none repeat scroll 0 0 transparent;
+    float: left;
+    height: 50px;
+    padding: 0;
+    position: static;
+    width: 82px;
+    z-index: 100;
+}
+/*
+.menu-dys li:hover {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-color: #247BD0 #247BD0 #FFFFFF;
+    border-style: solid;
+    border-width: 2px;
+    color: #247BD0;
+    width: 78px;
+}
+*/
+.menu-dys li .title-food {
+    border-left: 1px solid #4098EF;
+    border-right: 1px solid #247BD0;
+    color: #FFFFFF;
+    cursor: default;
+    float: left;
+    font-size: 13px;
+    height: 30px;
+    line-height: 13px;
+    margin-top: 7px;
+    overflow: hidden;
+    padding: 5px 10px 1px;
+    text-align: center;
+    text-indent: 0;
+    width: 62px;
+}
+.menu-dys li.primero + li {
+    margin-left: 27px;
+    width: 105px;
+}
+.menu-dys li:hover a.todos-food {
+    background: none repeat scroll 0 0 #003A9D;
+    color: #FFFFFF;
+    margin: -2px;
+    overflow: visible;
+    padding: 12px 5px;
+    position: relative;
+    text-shadow: 1px 1px 0 #000000;
+}
+.menu-dys li.primero + li + li + li + li + li + li + li + li + li .title-food {
+    border-right: 0 none;
+    width: 60px;
+}
+.menu-dys li.primero + li + li + li + li + li + li + li + li + li:hover {
+    margin-left: 2px;
+    width: 76px;
+}
+.menu-dys li.primero + li + li + li + li + li + li + li + li + li + li .title-food {
+    border-right: 0 none;
+    width: 67px;
+}
+.menu-dys li.primero + li + li + li + li + li + li + li + li + li + li:hover {
+    margin-left: 2px;
+    width: 83px;
+}
+.electro ul li.segundo {
+    margin-left: 0;
+    width: 86px;
+}
+#header .electro li.penultimo:hover {
+    margin-left: 0;
+    width: 78px;
+}
+.electro ul li a.todos-food:hover {
+    background: url("../img/bck/btn-supermercado.png") no-repeat scroll left -50px #2DB8FF;
+    margin: 0;
+}
+
+
+
+
+.menu-dys li.mega {
+    background: none repeat scroll 0 0 transparent;
+    float: left;
+    height: 50px;
+    padding: 0;
+    position: static;
+    width: 80px;
+    z-index: 100;
+}
+/*
+.menu-dys li:hover {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-color: #247BD0 #247BD0 #FFFFFF;
+    border-style: solid;
+    border-width: 2px;
+    color: #247BD0;
+    width: 76px;
+}
+.menu-dys li:hover .title-food {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: medium none;
+    color: #247BD0;
+    cursor: default;
+    height: 40px;
+    padding: 4px 7px 0;
+    position: relative;
+    z-index: 10000 !important;
+}
+*/
+.menu-dys li .title-food {
+    border-left: 1px solid #4098EF;
+    border-right: 1px solid #247BD0;
+    color: #FFFFFF;
+    cursor: default;
+    float: left;
+    font-size: 13px;
+    height: 30px;
+    line-height: 13px;
+    margin-top: 7px;
+    overflow: hidden;
+    padding: 5px 9px 1px;
+    text-align: center;
+    text-indent: 0;
+    width: 62px;
+}
+.menu-dys li.primero + li + li + li + li + li + li + li + li + li .title-food {
+    border-right: 0 none;
+    width: 85px;
+}
+.menu-dys li.primero + li + li + li + li + li + li + li + li + li {
+    width: 100px;
+}
+.menu-dys li.primero + li + li + li + li + li + li + li + li + li:hover {
+    margin-left: 2px;
+    width: 94px;
+}
+.menu-dys li.primero + li {
+    margin-left: 27px;
+    width: 104px;
+}
+.menu-dys li.primero + li + li + li + li + li + li + li + li + li .title-food {
+    border-right: 0 none;
+    padding-top: 6px;
+    text-indent: 6px;
+    width: 80px;
+}
+.menu-dys li.primero + li:hover {
+    width: 100px;
+}
+.electro ul li.segundo:hover {
+    width: 80px;
+}
+.electro ul li.segundo {
+    margin-left: 0;
+    width: 84px;
+}
+.electro li.segundo + li {
+    width: 97px;
+}
+.electro li.segundo + li:hover {
+    width: 93px;
+}
+.electro li.segundo + li + li {
+    width: 91px;
+}
+.electro li.segundo + li + li:hover {
+    width: 87px;
+}
+.electro li.segundo + li + li + li {
+    width: 82px;
+}
+.electro li.segundo + li + li + li:hover {
+    width: 78px;
+}
+.menu-dys ul.root {
+    background: url("/dys/img/btn/bck_menu2.png") repeat-x scroll left bottom #DEE0E3;
+    border-radius: 4px 4px 4px 4px;
+    border-right: 1px solid #DEE0E3;
+    display: block;
+    float: left;
+    height: 50px;
+    position: relative;
+    width: 960px;
+    z-index: 10;
+}
+.menu-dys li .title-food {
+    border-left: 1px solid #C8C8C8;
+    border-right: 0 solid #CFCFCF;
+    color: #1A75CF;
+    cursor: default;
+    float: left;
+    font-size: 13px;
+    line-height: 13px;
+    margin-top: 6px;
+    overflow: hidden;
+    text-align: center;
+    text-indent: 0;
+}
+/*
+.menu-dys li:hover {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border-color: #C8C8C8 #C8C8C8 #FFFFFF;
+    border-right: 2px solid #C8C8C8;
+    border-style: solid;
+    border-width: 1px 2px 2px;
+    color: #247BD0;
+    width: 76px;
+}
+*/
+.menu-dys a.todos-food {
+    background: url("/dys/img/btn/bck_menu3.png") repeat scroll left top #23A5FC;
+    border-radius: 4px 0 0 4px;
+    color: #FFFFFF;
+    float: left;
+    padding: 12px 5px;
+    text-align: center;
+    text-shadow: 0 0 0 #999999;
+    width: 100px;
+}
+
+.menu-dys li.primero + li .title-food:hover {
+    color: #00AAEF;
+}
+.menu-dys li .title-food:hover {
+    color: #00AAEF;
+}
+.menu-dys .seccion .titulo_seccion img {
+    margin: 2px -8px -4px;
+    padding: 1px 4px 1px 0;
+}
+
+/**************** Falabella:  *********************/
+#menu-dys ul.ui-tabs-nav span.mega a {
+	padding-top: 4px;
+}

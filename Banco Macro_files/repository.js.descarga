@@ -1,0 +1,344 @@
+const getURLParams = (key) => {
+	let response = {
+		[key] : ""
+	};
+
+	if ('URLSearchParams' in window) {
+		const queryString = window.location.search;
+		const params = new URLSearchParams(queryString);
+		if(params.has(key)){
+			response[key] = params.get(key);
+		}
+	}
+	return response;
+}
+
+function goToTab(dest_url) {
+	let url = dest_url;
+	if (url.indexOf("#") > 0 && url.includes("pill")) {
+		let activeTab = url.substring(url.indexOf("#") + 1);
+		$('.nav[role="tablist"] a[href="#' + activeTab + '"]').tab('show');
+		window.location.href = url.replace(activeTab, "tab-anch");
+	}
+}
+
+const getUTM = (utm) => {
+   let urlUTM = '';
+   
+   if(utm.id != 'utm_id=&'){
+	   urlUTM += utm.id;
+   }
+   if(utm.source != 'utm_source=&' ){
+	   urlUTM += utm.source;
+   }
+   if(utm.medium != 'utm_medium=&'){
+	   urlUTM += utm.medium;
+   }
+   if(utm.campaign != 'utm_campaign=&'){
+	   urlUTM += utm.campaign;
+   }
+   if(utm.term != 'utm_term=&'){
+	   urlUTM += utm.term;
+   }
+   if(utm.content != 'utm_content=&'){
+	   urlUTM += utm.content;
+   }
+   if (urlUTM != ''){
+	   return urlUTM.substring(0,urlUTM.length-1);
+   }
+   return urlUTM
+};
+	   
+const CreateElement = (type, classes, pInnerHTML) => {
+	let element = document.createElement(type);
+	
+	if(classes !== "" && classes !== undefined){
+		for(let i=0;i<classes.length;i++) {
+			element.classList.add(classes[i]);
+		}
+	}
+	
+	if(pInnerHTML !== "" && pInnerHTML !== undefined) {
+		element.innerHTML = pInnerHTML;
+	}
+	
+	return element;
+}
+	
+const CreateImage = (classes, src, alt, pWidth, pHeight) => {
+	let img = document.createElement("img");
+	
+	if(classes !== "" && classes !== undefined){
+		for(let i=0;i<classes.length;i++) {
+			img.classList.add(classes[i]);
+		}
+	}
+	
+	if(src !== "" && src !== undefined) {
+		img.setAttribute("src", src);
+	}
+	
+	if(alt !== "" && alt !== undefined) {
+		img.setAttribute("alt", alt);
+	}
+	
+	if(pWidth !== "" && pWidth !== undefined) {
+		img.width = pWidth;
+	}
+	
+	if(pHeight !== "" && pHeight !== undefined) {
+		img.height = pHeight;
+	}
+	
+	return img;
+}
+
+const CreateLink = (url, classes, innerHTML) => {
+	let aLink = document.createElement("a");
+	
+	if(url !== "" && url !== undefined) {
+		aLink.href = url;	
+	}
+	
+	if(classes !== "" && classes !== undefined){
+		for(let i=0;i<classes.length;i++) {
+			aLink.classList.add(classes[i]);
+		}
+	}
+	
+	if(innerHTML != "" && classes !== undefined) {
+		aLink.innerHTML = innerHTML;
+	}
+	
+	return aLink;
+}
+
+const CreateIFrame = (source) => {
+	let iframe = document.createElement("iframe");
+	iframe.src = source;
+	
+	return iframe;
+}
+
+const getDate = (fecha) => {
+	const d = new Date(fecha);
+	let day = d.getDate();
+	return day;
+}
+	
+const GetShortMonth = (fecha) => {
+	const monthShort = ["ENE","FEB","MAR","ABR","MAY","JUN","JUL","AGO","SEP","OCT","NOV","DIC"];
+	const d = new Date(fecha);
+	let month = d.getMonth();
+	return monthShort[month];
+}
+
+const GetLongMonth = (fecha) => {
+	const monthShort = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+	const d = new Date(fecha);
+	let month = d.getMonth();
+	return monthShort[month];
+}
+
+const GetHours = (fecha) => {
+	const d = new Date(fecha);
+	let hours = d.getHours();
+	return hours;
+}
+
+const getSemana = fecha => {
+	const dia_ms = 1000 * 60 * 60 * 24;
+	const dias_sem = 7;
+	const jueves = 4;
+
+	fecha = new Date(Date.UTC(fecha.getFullYear(), fecha.getMonth(), fecha.getDate()));
+	let dia = fecha.getUTCDay(); // Domingo es 0, sábado es 6
+	if (dia === 0) {
+		dia = 7;
+	}
+	fecha.setUTCDate(fecha.getUTCDate() - dia + jueves);
+	const inicio = new Date(Date.UTC(fecha.getUTCFullYear(), 0, 1));
+	const diferencia = fecha - inicio;
+	return Math.ceil(((diferencia / dia_ms) + 1) / dias_sem);
+};
+
+const getEventDay = (fecha)=>{
+	const dias = ['domingo','lunes','martes','mi&eacute;rcoles','jueves','viernes','s&aacute;bado',];
+	let f = new Date(fecha);
+	let d = f.getDay();
+	return dias[d];
+}
+
+const getEventHour = (fecha) =>{
+	let f = new Date(fecha);
+	let h = f.getHours().toString().padStart(2, 0)+":"+f.getMinutes().toString().padStart(2, 0);
+	return h;
+}
+
+const createShareModule = () => {
+	let shareContainer = CreateElement("div", ["share-container"]);
+	let shareButtonsContainer = CreateElement("div", ["share-buttons-container"]);
+	
+	shareContainer.appendChild(shareButtonsContainer);
+	
+	let aFacebook = CreateLink("#", ["share-btn", "mc-share-fb"], "");
+	let aLinkedin = CreateLink("#", ["share-btn", "mc-share-li"], "");
+	let aTwitter = CreateLink("#", ["share-btn", "mc-share-tw"], "");
+	let aEmail = CreateLink("#", ["share-btn", "mc-share-mail"], "");
+	let aWhatsapp = CreateLink("#", ["share-btn", "mc-share-wsp", "hidden-sm-up"], "");
+	
+	let imgFacebook = CreateImage("", "/imagen/icon-fb.svg", "Compartir en Facebook", "", "");
+	let imgLinkedin = CreateImage("", "/imagen/icon-li.svg", "Compartir en LinkedIn", "", "");
+	let imgTwitter = CreateImage("", "/imagen/icon-twt.svg", "Compartir en Twitter", "", "");
+	let imgEmail = CreateImage("", "/imagen/icon-envelop.svg", "Compartir por Email", "", "");
+	let imgWhatsapp = CreateImage("", "/imagen/whatsapp.svg", "Compartir por Whatsapp", "", "");
+	imgWhatsapp.setAttribute("data-action","share/whatsapp/share");
+	
+	aFacebook.appendChild(imgFacebook);
+	aLinkedin.appendChild(imgLinkedin);
+	aTwitter.appendChild(imgTwitter);
+	aEmail.appendChild(imgEmail);
+	aWhatsapp.appendChild(imgWhatsapp);
+	
+	shareButtonsContainer.appendChild(aFacebook);
+	shareButtonsContainer.appendChild(aLinkedin);
+	shareButtonsContainer.appendChild(aTwitter);
+	shareButtonsContainer.appendChild(aEmail);
+	shareButtonsContainer.appendChild(aWhatsapp);
+
+	return shareContainer;
+	
+}	
+const updateTitle = (objPath, titleGeo) => {
+	$(objPath).html(titleGeo);
+}
+
+const sortData = (data, key, valueTypeKey, orderType) => {
+	let order = orderType;
+	let list = data.Eventos;
+				
+	if(order === "ASC") {
+		list.sort(function(a, b){
+			let compared = 0;
+			
+			switch(valueTypeKey) {
+				case "Date":
+					compared = Date.parse(a[key]) - Date.parse(b[key]);
+					break;
+				case "Number":
+					compared = parseInt(a[key]) - parseInt(b[key]);
+					break;
+				default:
+					compared = a[key] - b[key];
+					break;
+			}
+			return compared;
+			
+		});
+	} else {
+		list.sort(function(a, b){
+			let compared = 0;
+			
+			switch(valueTypeKey) {
+				case "Date":
+					compared = Date.parse(a[key]) + Date.parse(b[key]);
+					break;
+				case "Number":
+					compared = parseInt(a[key]) + parseInt(b[key]);
+					break;
+				default:
+					compared = a[key] + b[key];
+					break;
+			}
+			return compared;
+		});
+	}
+	return list;
+}
+
+const areProvincesEquals = (provGeoLocation, provElement) => {
+	let provinces = provElement.split(",");
+	
+	for(let i=0; i < provinces.length; i++) {
+		if(provinces[i].replaceAll(" ", "").toLowerCase() == provGeoLocation.replaceAll(" ", "").toLowerCase()) return true;
+	}
+	
+	return false;
+}
+
+var initGenericMap = (id,data)=> {
+	if(data.length>0){
+		try {
+		
+			let center_long = -63.61702;
+			let center_lat = -38.41354;
+			let zoom = 4;
+			
+			if(data.length == 1){
+				center_long = data[0].longitude;
+				center_lat = data[0].latitude;
+				zoom = 13;
+			}
+			
+			let map = new google.maps.Map(document.getElementById(id), {
+				zoom: zoom,
+				center: new google.maps.LatLng(center_lat, center_long),
+				mapTypeId: google.maps.MapTypeId.ROADMAP
+			});
+		   
+			var infowindow = new google.maps.InfoWindow();
+
+			var markers = [];
+			for (var j = 0; j < data.length; j++) {
+				var marker = new google.maps.Marker({
+					position: new google.maps.LatLng(data[j].latitude, data[j].longitude),
+					map: map
+				});
+
+				google.maps.event.addListener(marker, 'click', (function(marker, j) {
+					return function() {
+						// infowindow.setContent(data[j].locNombre + ': ' + data[j].streetAddress + ', ' + data[j].locCity + ', ' + getProvinceNameByCode(data[j].provinceISOCode).toUpperCase());
+						// sin la provincia
+						//infowindow.setContent(data[j].locNombre + '<br>' + data[j].streetAddress + ', ' + data[j].locCity);
+						infowindow.open(map, marker);
+					}
+				})(marker, j));
+				markers.push(marker);
+			}
+			var markerCluster = new MarkerClusterer(map,markers,{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+
+			console.log("Libreria google.maps.Geocoder() se ha cargado correctamente");
+		}
+		catch(err) {
+			console.log("No se ha podido cargar google.maps.Geocoder(). " + err.message);
+		} 
+	}
+}
+
+const setCookieExDays = (cname, cvalue, exdays) => {
+  const d = new Date();
+  d.setTime(d.getTime() + (exdays*24*60*60*1000));
+  let expires = "expires="+ d.toUTCString();
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookieByName(cname) {
+	let name = cname + "=";
+	let decodedCookie = decodeURIComponent(document.cookie);
+	let ca = decodedCookie.split(';');
+	for(let i = 0; i <ca.length; i++) {
+		let c = ca[i];
+		while (c.charAt(0) == ' ') {
+		  c = c.substring(1);
+		}
+		if (c.indexOf(name) == 0) {
+		  return c.substring(name.length, c.length);
+		}
+	}
+	return "";
+}
+
+function isMobileDevice() {
+	if(window.screen.width < 600) return true;
+	return false;
+}

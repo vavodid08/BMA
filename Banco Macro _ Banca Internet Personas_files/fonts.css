@@ -1,0 +1,41 @@
+
+@font-face {
+	font-family: pfbeausanspro-bold;
+	src: url('../../fonts/PfBeauSansPro/win/pfbeausanspro-bold-webfont.woff'),
+		 url('../../fonts/PfBeauSansPro/win/pfbeausanspro-bold-webfont.eot?#iefix') format('embedded-opentype'), 
+	     url('../../fonts/PfBeauSansPro/win/pfbeausanspro-bold-webfont.ttf') format('truetype'),
+	     url('../../fonts/PfBeauSansPro/win/pfbeausanspro-bold-webfont.svg#pfbeausanspro-bold') format('svg');
+}
+
+@font-face {
+	font-family: pfbeausanspro-light;
+	src: url('../../fonts/PfBeauSansPro/win/pfbeausanspro-light-webfont.woff'),
+		 url('../../fonts/PfBeauSansPro/win/pfbeausanspro-light-webfont.eot?#iefix') format('embedded-opentype'), 
+	     url('../../fonts/PfBeauSansPro/win/pfbeausanspro-light-webfont.ttf') format('truetype'),
+	     url('../../fonts/PfBeauSansPro/win/pfbeausanspro-light-webfont.svg#pfbeausanspro-light') format('svg');
+}
+
+@font-face {
+	font-family: pfbeausanspro-regular;
+	src: url('../../fonts/PfBeauSansPro/win/pfbeausanspro-regular-webfont.woff'),
+		 url('../../fonts/PfBeauSansPro/win/pfbeausanspro-regular-webfont.eot?#iefix') format('embedded-opentype'), 
+	     url('../../fonts/PfBeauSansPro/win/pfbeausanspro-regular-webfont.ttf') format('truetype'),
+	     url('../../fonts/PfBeauSansPro/win/pfbeausanspro-regular-webfont.svg#pfbeausanspro-regular') format('svg');
+}
+
+@font-face {
+	font-family: pfbeausanspro-semibold;
+	src: url('../../fonts/PfBeauSansPro/win/pfbeausanspro-semibold-webfont.woff'),
+		 url('../../fonts/PfBeauSansPro/win/pfbeausanspro-semibold-webfont.eot?#iefix') format('embedded-opentype'), 
+	     url('../../fonts/PfBeauSansPro/win/pfbeausanspro-semibold-webfont.ttf') format('truetype'),
+	     url('../../fonts/PfBeauSansPro/win/pfbeausanspro-semibold-webfont.svg#pfbeausanspro-semibold') format('svg');
+}
+
+@font-face {
+	font-family: pfbeausanspro-thin;
+	src: url('../../fonts/PfBeauSansPro/win/pfbeausanspro-thin-webfont.woff'),
+		 url('../../fonts/PfBeauSansPro/win/pfbeausanspro-thin-webfont.eot?#iefix') format('embedded-opentype'), 
+	     url('../../fonts/PfBeauSansPro/win/pfbeausanspro-thin-webfont.ttf') format('truetype'),
+	     url('../../fonts/PfBeauSansPro/win/pfbeausanspro-thin-webfont.svg#pfbeausanspro-thin') format('svg');
+
+}

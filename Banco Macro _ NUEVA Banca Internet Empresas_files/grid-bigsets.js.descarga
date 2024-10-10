@@ -1,0 +1,43 @@
+/**
+ *  Search big sets 
+ *  @see http://trirand.com/blog/jqgrid/jqgrid.html
+ */
+ 
+ var timeoutHnd; 
+
+ function doSearch(ev, tid) { 
+    if(timeoutHnd)
+    	clearTimeout(timeoutHnd) 
+   timeoutHnd = setTimeout(function() { gridReload(tid); }, 500) 
+ }
+ 
+ function gridReload(tid) {
+ 	//var focusedField = $("#elementWithFocus").val();
+ 	//focusedField = focusedField == 'nulo' ? "" : focusedField; 
+ 	
+	var uuid = $('#uuid').val();  
+ 	var gridurl = "collection/bigset.do?onlyRefreshGrid=true" + "&uuid="+uuid+"&colId=" + tid + "&";
+	var fieldsetId = "fieldset_" + tid;
+ 	$("#gbox_" + tid).append($('#loading-ajax-request'));
+	$('#loading-ajax-request').show();
+	
+	$("#" + fieldsetId + " input:text[name]").each(function(i) {
+		gridurl += "bigsetFields_" + tid + "=" + $(this).attr('name') + 
+				   "&bigsetValues_" + tid + "=" + $(this).val() + 
+				   "&bigsetDatatypes_" + tid + "=" + $(this).attr('datatype') ;
+		gridurl += "&";
+	});
+
+	$.ajax({
+	  url: gridurl,
+	  success: function(data) {
+		$('#loading-ajax-request').remove();
+		$("#gbox_" + tid).html(data); 
+								
+	   	//Convert to grid if 'isGrid' attribute is present.
+	  	grid.htmlTableToGrid(tid);
+	  }
+	}); 
+ }
+
+ 

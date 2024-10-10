@@ -1,0 +1,73 @@
+
+function altaFavorito(accion){
+		
+		var nombreworkflow = document.getElementById("nombreworkflow").value;
+		
+		var label = document.getElementById("textoAmostrar").value;
+		
+		var parameters = encodeFormSelectField();
+		
+		var cantidad = document.getElementById("cantidad").value;
+				
+		var idComponente = document.getElementById("idComponente").value;
+
+		if(label != "" && nombreworkflow != ""){
+				
+		makePOSTRequestFavorito(parameters , nombreworkflow , label , accion , cantidad , idComponente); //FIXME
+	
+		}		
+		else {
+		
+		modalError.alert("Debe completar el Texto a mostrar");
+		
+		}
+}
+
+function bajaFavorito(accion , nombreWorkflow, idFavorite){
+		
+		var parameters = encodeFormSelectField();
+		
+		var cantidad = document.getElementById("cantidad").value;
+			
+		var idComponente = document.getElementById("idComponente").value;
+				
+		makePOSTRequestFavorito(parameters, nombreWorkflow, idFavorite, accion, cantidad, idComponente);
+	
+}
+
+function makePOSTRequestFavorito(parameters, nombreworkflow, idFavorite, accion, cantidad, idComponente) {
+	
+	var uuid = $('#uuid').val();
+	parameters += '&uuid=' + uuid;
+	var dataToSend="";
+		if (CyberBank.encryption.enable) {
+			var p_temp = getRandomPassword();
+			parameters = JSON.stringify(createSecureRequest(parameters, p_temp));
+			dataToSend = {parameters : parameters}
+		}else{
+			dataToSend = parameters;
+		}
+	
+	$.ajaxInvoker({
+		type: 'POST',
+		url: 'favorite.do',
+		data: dataToSend,
+		headers: { 'Content-type': 'application/x-www-form-urlencoded; charset=UTF8' , 'Get-Form': 'true', 'X-Cache-ID': accion, 'nombreW': nombreworkflow, 'textoAmostrar': idFavorite, 'cantidad': cantidad, 'idComponente': idComponente},
+		async: false
+	}).done(function(data, textStatus, resp) {
+
+		var respText = data;
+		if (CyberBank.encryption.enable) {
+			respText = resolveSecureResponse(data, p_temp);
+		}
+
+		if(respText == "fallo\r\n"){
+			modalError.alert("Ya tiene un favorito con el nombre de ese workflow");
+	   	} else {
+			$("*#nombreWF").html(respText);
+	    }
+	}).always(function() { 
+ 
+	});
+
+}

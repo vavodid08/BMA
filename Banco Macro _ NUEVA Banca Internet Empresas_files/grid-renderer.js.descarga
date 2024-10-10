@@ -1,0 +1,85 @@
+/**
+ * 
+ * Grid renderer decides whether to show an embbeded subgrid or an external subgrid, based upon @param hasEmbbeded.
+ *
+ * @author hzerrizuela
+ *
+ */
+
+
+renderer = {
+	toBigset: function(opt, tid) {
+		opt.caption = "";
+		opt.height = 255;
+		opt.pgbuttons = false;
+		opt.pgtext = false;
+		opt.pginput = false;
+		
+	},
+	
+	toGrid: function(hasEmbbeded, opt, dep, tid) {	
+		
+		var uuid = $('#uuid').val();
+		
+		if (hasEmbbeded) {  //For embbeded subgrids (Grid as subgrid)
+				$("#" + dep).remove();
+				opt.subGrid = true,
+            	opt.subGridUrl = "collection/grid.do";
+            	opt.subGridOptions = { "selectOnExpand": true };
+            	
+				//Only if I have the subgrid already converted I can add the event safely...
+				opt.onSelectRow = function(ids) { 
+									 	if(ids != null) {
+									 		$("#gbox_" + dep).append($('#loading-ajax-request'));
+									 		$('#loading-ajax-request').show();
+											$.ajax({
+	   										  data: {colId: tid, depId: dep, ids: ids, uuid:uuid},
+											  url: "collection/grid.do",
+											  success: function(data) {
+												$('#loading-ajax-request').remove();												
+												$(grid.hashed(tid) + "_" + ids).html(data);
+												
+								            	//Convert to grid if 'isGrid' attribute is present.
+								            	renderer.singleSubgridConversion(dep);
+											  }
+											});
+									 	} 
+						 			};
+		} else { //For external subgrids (Master detail)
+			opt.onSelectRow = function(ids) { 
+									 	if(ids != null) {
+									 		$("#gbox_" + dep).append($('#loading-ajax-request'));
+									 		$('#loading-ajax-request').show();
+											$.ajax({
+	  										  data: {colId: tid, depId: dep, ids: ids, uuid:uuid},
+											  url: "collection/grid.do",
+											  success: function(data) {
+												$('#loading-ajax-request').remove();
+												$('#' + dep).remove();
+												$("#myPager_" + dep).remove();
+												$("#gview_" + dep).parent().parent().html(data);
+												
+								            	//Convert to grid if 'isGrid' attribute is present.
+								            	grid.htmlTableToGrid(dep);
+											    
+											  }
+											});
+									 	} 
+						 			};
+		}
+	}, 
+	
+	singleSubgridConversion: function(anId) {
+		var aSubgrid = $("#" + anId);
+		
+		var opt = {   	 autowidth: true, 
+						 shrinkToFit: false,
+						 emptyrecords: 'No hay registros que mostrar.'
+					 };
+		
+		//Perform conversion 						
+		 tableToGrid(aSubgrid, opt);
+	}
+	
+}
+

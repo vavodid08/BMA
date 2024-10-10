@@ -1,0 +1,82 @@
+/**
+ * 
+ * Menu Horizontal para Falabella 
+ *
+ * @author hzerrizuela
+ */
+
+.menu_shortcut.more-margin {
+    margin-top: 20px;
+    text-align: left;
+}
+
+#metainfo.more-margin {
+    float: right;
+    text-align: right;
+    margin-top: 20px;
+}
+
+/*********************/
+/*     MENU STYLES   */
+/*********************/ 
+
+#menu-dys span.firstLevel {
+	cursor:pointer;
+	width: 80px;
+	font-weight: bold;
+}
+
+#menu-dys span.firstLevel.current:hover {
+	color: #005030;
+	text-decoration: underline;
+}
+
+/*********************/
+/* BREADCRUMB STYLES */
+/*********************/
+
+.bread_span.more-margin {
+	margin-top: 84px;
+}
+
+/***************/
+/* LIST STYLES */
+/***************/
+
+div.seccion ul.nested-ul {
+	padding-left: 15px;
+	list-style-type: none;
+}
+
+.nested-ul span.titulo_seccion {
+    font-size: small !important;
+	background: url("../images/flechacyanmenu.gif") no-repeat transparent; /* no-repeat scroll 0 5px transparent; */
+  	background-position: 0px 5px;
+    padding-left: 7px;
+}
+
+.secciones.seccion li {
+ 	line-height: 24px;
+}
+
+
+ul.main-ul {
+ 	list-style-type: none;
+}
+
+ul.main-ul li a {
+	background: url(../../../images/falabella/bullet.png) no-repeat scroll 0 5px transparent;
+	padding-left: 21px;
+	font-family: Arial,Helvetica,sans-serif;
+	font-size: 12px;
+	text-decoration: none;
+	color: #999999;
+}
+
+ul.main-ul li a:hover { 
+  	background-color:#005030;
+}
+  
+ul.main-ul li:hover > a {
+	color: #FFF;
+}

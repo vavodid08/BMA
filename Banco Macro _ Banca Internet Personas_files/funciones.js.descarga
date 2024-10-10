@@ -1,0 +1,64 @@
+function executeMenuOptionInPre(widgetId, evento){
+	executeWidgetAction(widgetId,evento);
+}
+
+function closeFooterModal(){
+	$('#modalWindow').jqmHide();
+	$('#modalWindow').remove();
+	
+}
+
+function closeModal(event){
+	$('#modalBackground').remove();
+	$('#modalWindow').remove();
+	event.stopPropagation();
+}
+
+function verInformacion(texto,titulo){
+	$(document.body).append(
+			""
+			+"<div id='modalBackground' style='height: 100%; width: 100%; position: fixed; left: 0px; top: 0px; z-index: 2999; opacity: 0.5; background-color: #000000'></div>"
+		    +"<div id='modalWindow' class='row' style='z-index: 3000;'>"
+		    	+"<form method='POST' id='main_form_modal'>"
+		    		+"<div class=\"table_default modal\">"
+		    			+"<div class=\"table-align_default modal_container\">"
+		    				+"<div class=\"table-align_default modal_container_title col s12\">"
+		    					+"<h2 tabindex=\"0\" role=\"heading\" class=\"constant-label_default\">"+titulo+"</h2>"
+		    				+"</div>"
+		    				+"<span tabindex=\"0\" style=\"position: absolute; top: -1000px;\">Te informamos que la lectura de los t&eacuterminos y condiciones demora aproximadamente m&aacutes de 10 minutos.</span>"
+		    				+"<div tabindex=\"0\" class=\"table-align_default modal_container_message col s12\">"
+		    					+texto
+		    				+"</div>"
+		    				+"<div class=\"table-align_default col s12\">"
+		    					+"<div class=\"col s2 offset-s5\">"
+		    						+"<button type=\"button\" class=\"action-button_secondary\" onclick=\"closeModal(event);enableScroll();\">Cerrar</button>"
+		    					+"</div>"
+		    				+"</div>"
+		    			+"</div>"
+		    		+"</div>"
+		    	+"</form>"
+		    +"</div>"
+		);
+	preventFocusOutsideModal($("#main_form_modal"));
+}
+
+
+function exportarDesdeFooter(titulo){
+	var elem = $('#richText0');
+	var windowObject = window.open("", "PrintWindow");
+	windowObject.document.writeln("<h1>"+titulo+"</h1>");
+	windowObject.document.writeln(elem.html());
+	windowObject.document.close();
+	windowObject.focus();
+	windowObject.print();
+	windowObject.close();
+
+}
+
+function createFooterContactsForm(){
+	if ($("#contactsFrom").length == 0){
+		$form = $("<form id='contactsForm' method='POST'></form>");
+		$form.append('<input type="hidden" name="publicSite" value="contactos" id="contactos">');
+		$('body').append($form);
+	}
+}

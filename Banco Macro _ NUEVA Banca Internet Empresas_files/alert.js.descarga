@@ -1,0 +1,213 @@
+/**
+ * Metodos especificos de manejo de alertas. Depende del proyecto
+ */
+
+/**
+ * Funcion que se encarga de solicitar y mostrar 
+ */
+function reload(){
+	reloadParametrizable(true);
+}
+
+function reloadParametrizable(isAsync){
+    try{
+    	var dataToSend="";
+    	var parameters="";
+		if (CyberBank.encryption.enable) {
+			var p_temp = getRandomPassword();
+			parameters = JSON.stringify(createSecureRequest(parameters, p_temp));
+			dataToSend = {parameters : parameters}
+		}else{
+			dataToSend = parameters;
+		}
+		$.ajaxInvoker({
+            type: 'POST',
+            async: isAsync,
+            url: 'index',
+            data: dataToSend,
+            dataType: "xml",
+            headers: { 'Content-type': 'application/x-www-form-urlencoded', 'Notice-Request':'true' },
+            success: function(data) { 
+            	var respText = data;
+				if (CyberBank.encryption.enable) {
+					respText = resolveSecureResponse(data, p_temp);
+				}
+            	if(widgetsRelodablesAlerts.length>0){
+            		reloadTemplateWidgetsAlerts();
+            	}
+            	fillNotice(respText);
+            },
+            error: function(jqXHR, textStatus, errorThrown) { 
+ //           	console.log(jqXHR, textStatus, errorThrown); 
+            	request.abort(); 
+            }
+        });
+    
+     }catch(e){
+     }
+}
+
+function fillNotice(xmlResponse){
+
+	var code = $(xmlResponse).find('CODE').first().text();
+    
+    if ( code =="ERROR"){
+        
+        return ;
+    }
+    else{
+
+        var textNotice = $(xmlResponse).find('TEXT').first().text();
+        
+        var alertToRead = 0;
+        alertToRead = textNotice;
+        
+    	if (alertToRead <= 0){
+    		$('.widget_alert_badge2').css("display","none");
+    	}else{
+    		$('.widget_alert_badge2').css("display","inline-block");
+            var spanTopBar = document.getElementById('topbartext');
+            //spanTopBar.innerHTML = alertToRead;
+    	}
+   
+//		sonar();        
+    }
+}
+
+
+function sonar() {
+	document.getElementById("alertsound").innerHTML = "<embed src='/ding.wav' hidden=true >";
+}
+
+
+
+function doPageJumpForAlerts(id, index){
+	
+	doPageJump(id, index);
+		
+	var elem = $('#'+id);
+	
+	var collectionBody = $(elem).children("tbody").children();
+	
+	updateCollection(elem);
+	
+}
+
+//el elemento es la coleccion sobre la que estoy trabajando
+function replacePaginator(elem){
+
+	var collectionFooter = $(elem).children("tfoot").find("a"); 
+	collectionFooter.each(function () {
+				
+		var origClick = $(this).attr('onclick');
+		if (origClick!=null && origClick.length){
+
+			//elimino el return 
+			var click = origClick.split(";")[0]; 
+			click = click.replace("doPageJump","doPageJumpForAlerts");
+			
+			var onclick_previo = new Function(click);
+					$(this).removeAttr('onclick');
+					$(this).bind("click", function() {
+								onclick_previo();
+							});
+			}
+	});	
+}
+
+
+function updateCollection(elem){
+	var dif = updateCollectionHeader(elem);
+	replacePaginator(elem);
+	return dif;
+}
+
+
+function updateCollectionHeader(elem){
+
+	var dife = +getNumberOfAlertByCollection(elem);
+	addNumberOfAlertToHeader(elem,dife)
+	var colHead = $(elem).children("thead");
+	$(colHead).children("tr[class=collection-table_columns]").removeClass('collection-table_columns');
+	return dife;
+
+	
+}
+
+function addNumberOfAlertToHeader(elem,number){
+	
+	var colHead = $(elem).children("thead");
+	var head = $(colHead).children(":first").children("td");
+	var headText = $(head).text();
+	$(head).text(headText+" ("+number+")");
+
+}
+
+//me devuelve cuantas de la coleccion pasada estan leidas
+function getNumberOfAlertByCollection(elem){
+
+	var result = "0";
+	
+	try{
+		var uuid = $('#uuid').val();
+		var dataToSend = "colId="+$(elem).attr("id")+"&uuid="+uuid;
+		
+		var dataToAjax="";
+		if (CyberBank.encryption.enable) {
+			var p_temp = getRandomPassword();
+			dataToSend = JSON.stringify(createSecureRequest(dataToSend, p_temp));
+			dataToAjax = {parameters : dataToSend}
+		}else{
+			dataToAjax = dataToSend;
+		}
+		$.ajaxInvoker({
+	        type: 'POST',
+	        async: false,
+	        url: 'collection/alertNumber',
+			data: dataToAjax,
+	        headers: { 'Content-type': 'application/x-www-form-urlencoded', 'Notice-Request':'true' },
+	        success : function(data, textStatus, resp) {
+				var respText = data;
+					if (CyberBank.encryption.enable) {
+						respText = resolveSecureResponse(data, p_temp);
+					}
+            		result = respText.trim();	
+				
+			},
+	        error: function(jqXHR, textStatus, errorThrown) { 
+	        	console.log(jqXHR, textStatus, errorThrown); 
+	        	request.abort(); 
+	        }
+	    });
+	 }catch(e){
+	 }
+	 
+	 return result;
+}
+
+function reloadTemplateWidgetsAlerts() {
+	for (i = 0; i < widgetsRelodablesAlerts.length; i++) { 
+		if (!(typeof(widgetsRelodablesAlerts[i])  === "undefined") ) {
+			var uuid = $('#uuid').val();
+
+			var str="uuid="+encodeURIComponent(uuid)+"&";
+			str+="widgetId="+encodeURIComponent(widgetsRelodablesAlerts[i]);
+			var dataToSend="";
+			var p_temp;
+			if (CyberBank.encryption.enable) {
+				p_temp = getRandomPassword();
+				str = JSON.stringify(createSecureRequest(str, p_temp));
+				dataToSend = {parameters : str}
+			}else{
+				dataToSend = str;
+			}
+			$.ajaxInvoker({type: 'POST',
+					url: 'widget/update.do',
+		            headers: { 'Content-type': 'application/x-www-form-urlencoded; charset=UTF8', widgetId : widgetsRelodablesAlerts[i] },
+		            data: dataToSend,
+		            async: true
+	        }).done(reloadWidget(widgetsRelodablesAlerts[i],"templateWidget_",p_temp));
+		}
+	}
+	
+}

@@ -1,0 +1,163 @@
+//Se determina si se trata de Safari
+var isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+
+(function($) {
+
+var ajaxInvoker = $({});
+	
+$.ajaxInvoker = function (ajaxOpts) {
+	try {
+        var promise;
+
+        //Si la sesion expir� no se atienden mas peticiones. Se redirecciona al login.
+        if (CyberBank.sessionTimeOut){
+            doLogout();
+            return;
+        }
+
+
+        //Si la encripcion esta activa se manda json
+        if (CyberBank.encryption.enable) {
+            ajaxOpts.dataType = 'json';
+        }
+
+        //Se setea el timeout para la peticion.
+        if (ajaxInvokerTimeout != '-1') {
+            ajaxOpts.timeout = ajaxInvokerTimeout;
+        }
+        //Si el cliente es safari:
+        if (isSafari) {
+            //Se matiene el modo de ejecucion original de la peticion.
+            var isSync = false;
+            /*Si es syncrono entonces agrego el shwoProgress y solicito confirmacion para cerrar la pagina*/
+            if (!ajaxOpts.async) {
+                ajaxOpts.beforeSend = function() {
+                    $.showprogress();
+                    if (!ajaxOpts.escapeConfim) {
+                        $(window).bind("beforeunload", function() {
+                            return confirm("Seguro?");
+                        });
+                    }
+                };
+                isSync = true;
+            }
+            //Se setea async en true, para forzar que sea async
+            ajaxOpts.async = true;
+            //Si era Syncrono, entonces ejecuto con el hideProgress y se hace el unbind de la solicitud de confirmacion
+            if (isSync) {
+                promise = $.ajaxQueue(ajaxOpts).always(function() {
+                    $.hideprogress();
+                    $(window).unbind("beforeunload");
+                }).fail(function(jqXHR, textStatus, errorThrown) {
+                    failAjaxLog(ajaxOpts);
+                    var extrainfo = getExtraDataOnFail(jqXHR, textStatus, errorThrown);
+                    displayTimeoutAjaxError(ajaxOpts,extrainfo);
+                });
+            } else {
+                promise = $.ajaxQueue(ajaxOpts).fail(function(jqXHR, textStatus, errorThrown) {
+                    failAjaxLog(ajaxOpts);
+                    var extrainfo = getExtraDataOnFail(jqXHR, textStatus, errorThrown);
+                    displayTimeoutAjaxError(ajaxOpts,extrainfo);
+                });
+            }
+        } else {
+            promise = $.ajax(ajaxOpts);
+        }
+        return promise;
+    } catch (e) {
+        CyberBank.utils.logError(e);
+    }
+};
+
+})(jQuery);
+
+
+/**
+ Implementación de Plugin para JQuery para la implementación de una cola para que de invocaciones AJAX ASYNC s
+ sean invocadas en una forma secuencial, simulando que se realizan en forma SYNC
+**/
+
+(function($) {
+
+// Objeto vacio Query utilizado para la implementación de la Cola
+var ajaxQueue = $({});
+
+
+$.ajaxQueue = function( ajaxOpts ) {
+    var jqXHR,
+        dfd = $.Deferred(),
+        promise = dfd.promise();
+    
+    //Se encola el requerimiento.
+    
+    ajaxQueue.queue( doRequest );
+
+    //Se agrega un metodo abort
+    promise.abort = function( statusText ) {
+
+    	//Aborta el jqXHR si este esta activo
+        if ( jqXHR ) {
+            return jqXHR.abort( statusText );
+        }
+
+        var queue = ajaxQueue.queue(),
+            index = $.inArray( doRequest, queue );
+
+        if ( index > -1 ) {
+            queue.splice( index, 1 );
+        }
+
+        dfd.rejectWith( ajaxOpts.context || ajaxOpts,
+            [ promise, statusText, "" ] );
+
+        return promise;
+    };
+
+    // Ejecuta el request actual.
+    function doRequest( next ) {
+        jqXHR = $.ajax( ajaxOpts )
+            .done( dfd.resolve )
+            .fail( dfd.reject )
+            .then( next, next );
+    }
+
+    return promise;
+};
+
+})(jQuery);
+
+function failAjaxLog(ajaxOpts) {
+    var uuid = $('#uuid').val();
+    $.ajax({type: 'POST',
+                    url: 'ajaxTimeout',
+                    headers: { 'Content-type': 'application/x-www-form-urlencoded; charset=UTF8'},
+                    data: {'uuid':uuid, 'urlParam':ajaxOpts.url, 'dataParams': ajaxOpts.data},
+                    async: true
+                }).done(console.log('Timeout'));
+
+}
+
+function displayTimeoutAjaxError(ajaxOpts, extraInfo){
+
+    /*Si es un widget, se redenriza el mensaje dentro del container del widget"*/
+    if (ajaxOpts.url.indexOf("widget") != -1) {
+        var widgetId = getQueryVariable('widgetId',ajaxOpts.data);
+        $('#'+widgetId).html(traducir('No se puede establecer conexion con el Servidor'))
+        return;
+    }
+
+    displayTimeoutError(extraInfo);
+    
+}
+
+function getQueryVariable(variable, strData) {
+    var query = strData;
+    var vars = query.split('&');
+    for (var i = 0; i < vars.length; i++) {
+        var pair = vars[i].split('=');
+        if (decodeURIComponent(pair[0]) == variable) {
+            return decodeURIComponent(pair[1]);
+        }
+    }
+    console.log('Query variable %s not found', variable);
+}

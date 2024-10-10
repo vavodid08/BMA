@@ -1,0 +1,36 @@
+/**
+ * 
+ * Script to enable jquery calendar
+ *
+ * @author hzerrizuela
+ *
+ */
+
+niceCalendar = {
+
+	init: function() {
+		
+		if($( ".niceCalendar" ).length>0){
+			$( ".niceCalendar" ).each(function(i,elem){
+				$(elem).attr("regex","^[\\d/]{0,10}$");
+				datePickerController.destroyDatePicker($(elem).attr("id"));
+				var obj = {};
+				obj[$(elem).attr("id")] = "%d/%m/%Y";
+				datePickerController.createDatePicker(
+						{
+							"formElements":obj,
+							"callbackFunctions":{
+								"dateset":[function(props){
+									$("#"+props.id).trigger("dateset");
+									}]
+							}
+						});
+				if (typeof datePickerProperties !== 'undefined'){
+					datePickerController.setDisabledDates($(elem).attr("id"), datePickerProperties[$(elem).attr("id")]);
+					}
+			});
+		}
+		
+	}
+	
+}

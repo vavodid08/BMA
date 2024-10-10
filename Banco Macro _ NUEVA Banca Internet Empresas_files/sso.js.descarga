@@ -1,0 +1,49 @@
+/******************************************/
+/******* SINGLE SIGN ON FUNCTIONS *********/
+/******************************************/
+
+var ssoObject = {
+	init : function() {
+		var currentLinkTextVal =   $("li[currentLinkText]").attr('currentLinkText') || 'NONE';
+		
+		ssoObject.controller.hideSubmenusSSO(currentLinkTextVal);
+		// Mostrar cuerpo principial luego de que se esconden los submenues. Si no, se van a ver los menus un segundo antes de ser ocultados. 
+		$('#cyberbankBody').show();
+		
+		//callbacks the submitSubmenuByAjax - no llamo a cargarJsFromAjax() para evitar que en <head> se acumulen reglas de js de layouts anteriores.
+		//cargarJsFromAjax(text);
+		evalScript();
+		cargarDocumentReady();
+		CyberBank.utils.resetButtonCursors();
+		showModalWindow();
+	},
+	
+	
+	controller: {
+		/**
+	    * Hides menu items level 2
+		*/
+		hideSubmenusSSO: function(currentLinkTextVal) {
+			//Get the parent li of the current hyperlink
+			var parentli = $("a:contains('" + currentLinkTextVal + "')").closest('li');
+		
+			//TODO Desacoplar de la llamada a esta funcion stopMenu2
+			stopMenu2(parentli);
+
+			$("li.menuNivel2SSO > a").hide();
+		},
+		/**
+		 * Assigns a class 'active' to the clicked SSO tab
+		 * The rest of the tabs are deprived of its attribute 'active' 
+		 */
+		toggleSSOTab: function(href) {
+			$("li.dropDownSSO > a").removeAttr("class");
+			$(href).attr("class", "active");
+		}
+	} 
+	
+
+	
+};
+/******************************************/
+$(document).ready(ssoObject.init);

@@ -1,0 +1,294 @@
+function submitPageJump(collectionID, pageIncrement, maxPages, nextRow, requestLot, pageNumber){
+    
+        var str = '';
+	  	/*Agergo los ids de los items seleccionados*/
+	  	var params = encodeForm(getDocumentIDForm());
+	  	str += params;
+		str = str.substr(0, (str.length - 1)); 
+
+		var formElement= '';
+		updateHiddenColumn(collectionID+'_columnFilter');
+		formElement = document.getElementById('uuid');
+		var uuid= formElement.name  + '='  + encodeURI(formElement.value);
+		formElement = document.getElementById('IDContexto');
+		if ( formElement != null){
+			var IDContexto = formElement.name  + '='  + encodeURI(formElement.value);
+		}
+		
+		/************************************************************************/
+		var dataToSend="";
+		if (CyberBank.encryption.enable) {
+			var p_temp = getRandomPassword();
+			str = JSON.stringify(createSecureRequest(str, p_temp));
+			dataToSend = {parameters : str}
+		}else{
+			dataToSend = str;
+		}
+		
+		
+		$.ajaxInvoker({
+			type: 'POST',
+			url: 'collection/jump.do',
+			data: dataToSend,
+			headers: { 'Content-type': 'application/x-www-form-urlencoded', 
+				'colId': collectionID, 'increment': pageIncrement, 
+				'cantPages': maxPages, 
+				'nextRow': nextRow, 'requestLot': requestLot, 'pageNumber': pageNumber},
+			async: false
+			}).done(function(data, textStatus, resp) {
+			
+				var respText = data;
+				if (CyberBank.encryption.enable) {
+					respText = resolveSecureResponse(data, p_temp);	
+				}
+				var aCollection = isGridPaging(collectionID) ? "gview_" + collectionID : collectionID;
+				$("#myPager_" + collectionID).remove();
+	           	var tabla =document.getElementById(aCollection);
+	           //  Pisa el parentNode porque necesita sobreescribir la info de paginado que
+	           //  esta como atributo de la tabla y no en tabla.innerHTML
+	           // FIXME: Adicionalmente, se agrega el caso particular de la consolidada que esta dentro de un DIV
+	           if (isGridPaging(collectionID) || $("#"+aCollection).parent().attr("id")=='groupConsolidada') { //Porque las grillas se wrappean en un div
+					tabla.parentNode.parentNode.innerHTML = respText;
+	           } else {
+	       			tabla.parentNode.innerHTML = respText;
+	           }
+	
+	        	//Convert to grid if 'isGrid' attribute is present.
+	        	grid.htmlTableToGrid(collectionID);
+			//fillUuid();
+	        	$(document).trigger( "paginationComplete", [ collectionID ] );
+	            hideColumns(collectionID+'_columnFilter',collectionID);
+	            validateMaxColumnFilter(collectionID+'_columnFilter', $('#' + collectionID + '_columnFilter_maxColumnFilter').val());
+	            paintOnRegisterRow();
+	            customizedButtonsInPagination(collectionID);
+	            restyleCheckbox();
+			    restyleRadios();
+	}).always(function() { $.hideprogress(); setContainer2Draw(''); validateErrorInPagination(collectionID);checkUncheckSelectAllButonOnLoad();});
+    
+}
+
+function validateErrorInPagination(collectionID){
+	var coleccion = $("#"+collectionID);
+	if(coleccion.length>0){
+		//Me fijo si hay registros en la tabla
+		if($(coleccion.find("tbody")).children().length==0){
+			coleccion.hide();
+			//Si hay reportes los oculto junto con la tabla
+			if($(".table-align_report-component").length>0){
+				for (var a = 0; a < $(".table-align_report-component").length; a++) {
+					$($(".table-align_report-component")[a]).hide();
+				}
+			}
+			//Si existe un componente de error lo muestro, caso contrario agrego uno por default
+			if($("#htmlCodeErrorPagination").length>0){
+				$("#htmlCodeErrorPagination").show();
+			}else{
+				coleccion.after('<div style="width:100%;" id="divErrorPaginacion" class="cellDiv"><div class=" no-padding-left tableDiv table-align_default col s8 table-align_container-padding-20 no-padding-top" id="tableAligError" style="left: 180px;"><div class="rowDiv" style=" "><div style="width:100%;padding-top: 20px;" class="cellDiv"><div style="padding:4px;" class="div_campos"><div style="float:left;" class="div_campos_interno"><div class="img-err"><img src="images/error_icn.png"></div><span style="font-size:13px">Actualmente no podemos efectuar esta transacción. Por favor intentalo más tarde.</span></div></div></div></div><textarea id="error02" autofocus="" tabindex="0" rows="4" cols="50" style="display: none;"></textarea></div></div>');
+			}
+		}
+	}
+}
+
+function setTabIndexMinusOneInEmptyRegs(){
+	var tablas = $('table[class^="collection-table"]');
+	if(tablas.length>0){
+		tablas.find("th, td").filter(function(index){
+			return !($(this).text().trim() != "" || $(this).hasClass("collection-column_selectable-arrow"));
+		}).attr("tabindex","-1");
+	}
+}
+
+function submitColapsableCollection(collectionID, colapsable){
+	$('#headerColapsable_'+collectionID).removeClass('imagenFlecha'); 
+	$('#headerColapsable_'+collectionID).addClass('imagenLoading');
+	$('#headerColapsable_'+collectionID).attr('onclick','').unbind('click');
+	var uuid = $('#uuid').val();
+	var contexto = $('#IDContexto').val();
+	var functOnClick;
+	var $this = $('#'+collectionID);
+	events = $this.data('events');
+	if( events && events['click'] ){
+	  $.each( events['click'], function(){
+	   functOnClick=this;
+	});
+	}
+
+	/*Paso como parametro los items seleccionados*/
+  	var params = encodeForm(getDocumentIDForm()).split('&');
+  	var selectedItems = '';
+  	for (var i = 0; i < params.length; i++) {
+  		var param = params[i].split('=');
+  		if (param.length > 1 && param[0].indexOf("encodedcollection_") === 0) {
+  			selectedItems = selectedItems + params[i] + "&";
+  		}
+  	}
+  	var paramsStr ='uuid='+uuid+'&IDContexto=' +contexto;
+  	
+  	var dataToSend="";
+		if (CyberBank.encryption.enable) {
+			var p_temp = getRandomPassword();
+			paramsStr = JSON.stringify(createSecureRequest(paramsStr, p_temp));
+			dataToSend = {parameters : paramsStr}
+		}else{
+			dataToSend = paramsStr;
+		}
+		//Por bloqueo de seguridad no se enviara el selectedItems en caso de ser  vacio
+		var headers = { 'Content-type': 'application/x-www-form-urlencoded', 'colId' : collectionID, 'colapsable': colapsable, 'selectedItems': selectedItems };
+		if(selectedItems == ''){
+			headers = { 'Content-type': 'application/x-www-form-urlencoded', 'colId' : collectionID, 'colapsable': colapsable};
+		}
+		
+  	$.ajaxInvoker({
+		type: 'POST',
+		url: 'collection/colapsable.do',
+		headers: headers, 
+		data: dataToSend,
+		async: true
+  	}).done(function(data, textStatus, resp) {
+			var result = data;
+			if (CyberBank.encryption.enable) {
+				result = resolveSecureResponse(data, p_temp);
+			}
+			var aCollection = isGridPaging(collectionID) ? "gview_" + collectionID : collectionID;
+			$("#myPager_" + collectionID).remove();
+			if (isGridPaging(collectionID)) {
+				$("#"+aCollection).parent().parent().html(result);
+		   } else {
+			   if (colapsable && $("#"+aCollection).parent().attr("id")=='groupConsolidada') {
+					$("#"+aCollection).parent().parent().html(result);
+			   } else {
+					$("#"+aCollection).parent().html(result);
+			   }
+			   $("#"+aCollection).bind('click',functOnClick);    	   
+			}
+			grid.htmlTableToGrid(collectionID);
+			customizedButtonsInPagination(collectionID);
+			restyleCheckbox();
+		    restyleRadios();
+		});
+}
+
+function doPageJump(collectionID, pageIncrement) {
+	
+    /*tomo la tabla */    
+	var collection = document.getElementById(collectionID);
+	
+    /* tomo el numero de pagina actual */
+	var pageNumber = parseInt(collection.getAttribute('pagenumber'));
+    var maxPages = parseInt(collection.getAttribute('maxPages'));
+
+	if (maxPages==1){
+		modifyCollImages(false,false,false,false, collectionID);
+		return;
+	}
+ 
+ 
+ 	if (pageIncrement == 1 || pageIncrement == -1){
+		if ( (pageNumber + pageIncrement) < 1  || (pageNumber + pageIncrement) > maxPages){
+			return;
+		}
+    }
+    submitPageJump(collectionID, pageIncrement, maxPages, 0, false, pageNumber);
+
+	//si me fui directo al principio o al final    
+    if ( pageIncrement == 2){
+    	modifyCollImages(true,true,false,false, collectionID);
+    	return;
+    }
+    if ( pageIncrement == -2){
+    	modifyCollImages(false,false,true,true, collectionID);
+    	return;
+    }
+
+    /* si esta fuera de rango no hago nada */
+    if ( (pageNumber + pageIncrement) <= 1){
+    	modifyCollImages(false,false,true,true, collectionID);
+    }else
+	    if ( (pageNumber + pageIncrement) >= maxPages){
+	    	modifyCollImages(true,true,false,false, collectionID);
+	    }else{
+	    	modifyCollImages(true,true,true,true, collectionID);
+	    }
+    customizedButtonsInPagination(collectionID);
+    restyleCheckbox();
+    restyleRadios();
+}
+
+function customizedButtonsInPagination(collectionId){
+	//logica implementada ante la necesidad de ejecutar funciones cuando se colapsa/descolapsa la collection
+	if(collectionId != undefined){
+		try {
+			var myFunction = eval(collectionId);
+			if(typeof myFunction === 'function') {
+			    //Es seguro ejecutar la función
+				eval(collectionId+"()");
+			}
+		}
+		catch(err) {
+		
+		}
+	}
+	
+	setTabIndexMinusOneInEmptyRegs();
+	var img1 = $('form#main_form img[src="images/Macro-Selecta/ImFirstPage_Dis.png"]');
+	var img2 = $('form#main_form img[src="images/Macro-Selecta/ImLastPage.png"]');
+	var img3 = $('form#main_form img[src="images/ImFirstPage_Dis.png"]');
+	var img4 = $('form#main_form img[src="images/ImLastPage.png"]');
+	var img5 = $('form#main_form img[src="images/ImPrevPage_Dis.png"]');
+	var img6 = $('form#main_form img[src="images/ImNextPage_Dis.png"]');
+	var img7 = $('form#main_form img[src="images/Macro-Selecta/ImNextPage_Dis.png"]');
+	var img8 = $('form#main_form img[src="images/Macro-Selecta/ImPrevPage_Dis.png"]');
+	var img9 = $('form#main_form img[src="images/Macro-Selecta/ImFirstPage.png"]');
+	var img10 = $('form#main_form img[src="images/ImFirstPage.png"]');
+	var img11 = $('form#main_form img[src="images/ImLastPage_Dis.png"]');
+	var img12 = $('form#main_form img[src="images/Macro-Selecta/ImLastPage_Dis.png"]');
+	
+	if( img1 != null && img1.length >0){
+		img1.parent().remove();
+	}
+	if( img2 != null && img2.length >0){
+		img2.parent().remove();
+	}
+	if( img3 != null && img3.length >0){
+		img3.parent().remove();
+	}
+	if( img4 != null && img4.length >0){
+		img4.parent().remove();
+	}
+	if( img5 != null && img5.length >0){
+		img5.parent().attr("tabindex",-1);
+	}
+	if( img6 != null && img6.length >0){
+		img6.parent().attr("tabindex",-1);
+	}
+	if( img7 != null && img7.length >0){
+		img7.parent().attr("tabindex",-1);
+	}
+	if( img8 != null && img8.length >0){
+		img8.parent().attr("tabindex",-1);
+	}
+	if( img9 != null && img9.length >0){
+		img9.parent().remove();
+	}
+	if( img10 != null && img10.length >0){
+		img10.parent().remove();
+	}
+	if( img11 != null && img11.length >0){
+		img11.parent().remove();
+	}
+	if( img12 != null && img12.length >0){
+		img12.parent().remove();
+	}
+	
+	if(typeof focusElement != 'undefined' && focusElement != null){
+		var src = $(focusElement.children).attr("src");
+		var focus = $('form#main_form img[src="'+src+'"]').parent();
+		if(focus != null && focus.length>0){
+			focus.focus();
+		}
+		
+	}
+	if (typeof objAriaLabel != 'undefined') {
+		setAriaLabelInCollection(objAriaLabel.textoAria);
+	}
+}

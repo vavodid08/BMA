@@ -1,0 +1,170 @@
+const addElements = (idElem, collection) => {
+	let container = document.getElementById(idElem);
+
+	for(let i=0; i < collection.length; i++) {
+		container.appendChild(collection[i]);
+	}
+}											
+
+const settingDots = (collection) => {
+	for(let i=0; i < collection.length; i++) {
+		if(i==0) {
+			collection[i].classList.add("active");
+		}
+		collection[i].style.display = "block";													
+		collection[i].setAttribute("data-slide-to", i.toString());
+	}	
+}
+
+const settingSlider = (collection) => {
+	for(let i=0; i < collection.length; i++) {
+		if(i==0) {
+			collection[i].classList.add("active");
+		}
+	}	
+}
+
+const removeChild = (container) => {
+	const myNode = container;
+	while (myNode.firstChild) {
+		myNode.removeChild(myNode.lastChild);
+	}
+}
+
+const showGeoDots = (dotsContainer) => {
+	let elementsGeo = document.querySelectorAll("#"+dotsContainer+" [data-dot-prov]");
+	let sliderDefault = [];
+				
+	if(getLocation() == ""){
+		setDefaultLoc();
+	}
+	let provGeoLoc = getLocation().Provincia;
+				
+	for (let i = 0; i < elementsGeo.length; i++){
+		let provincesAvailable =  elementsGeo[i].getAttribute("data-dot-prov").substring(1);
+		
+		if (provGeoLoc == null || provGeoLoc == "") {
+			if (provincesAvailable == null || provincesAvailable == "") {
+				sliderDefault.push(elementsGeo[i]);
+				elementsGeo[i].remove();
+			} else {
+				elementsGeo[i].remove();
+			}
+		} else {
+			if(provincesAvailable == null || provincesAvailable == "") {
+				sliderDefault.push(elementsGeo[i]);
+				elementsGeo[i].remove();
+			} else {
+				if (areProvincesEquals(provGeoLoc, provincesAvailable)) {
+					sliderDefault.push(elementsGeo[i]);
+					elementsGeo[i].remove();
+				} else {
+					elementsGeo[i].remove();
+				}
+			}
+		}
+	}
+	
+	if(sliderDefault != null) {
+		addElements(dotsContainer , sliderDefault);													
+	}
+	settingDots(document.querySelectorAll("#"+dotsContainer+" [data-dot-prov]"));
+}
+
+const showGeoSlider = (sliderContainer) => {
+	let containerSlider = sliderContainer.trim();
+	let elementsGeo = document.querySelectorAll("#"+containerSlider+" [data-slider-prov]");	
+	
+	if(getLocation() == ""){
+		setDefaultLoc();
+	}
+	let provGeoLoc = getLocation().Provincia;
+			
+	let sliderDefault = [];
+	
+	try {
+		for (let i = 0; i < elementsGeo.length; i++){
+			let provincesAvailable =  elementsGeo[i].getAttribute("data-slider-prov").substring(1);
+			
+			if (provGeoLoc == null || provGeoLoc == "") {
+				if (provincesAvailable == null || provincesAvailable == "") {
+					sliderDefault.push(elementsGeo[i]);
+					elementsGeo[i].remove();
+				} else {
+					elementsGeo[i].remove();
+				}
+			} else {
+				if(provincesAvailable == null || provincesAvailable == "") {
+					sliderDefault.push(elementsGeo[i]);
+					elementsGeo[i].remove();
+				} else {
+					if (areProvincesEquals(provGeoLoc, provincesAvailable)) {
+						sliderDefault.push(elementsGeo[i]);
+						elementsGeo[i].remove();
+					} else {
+						elementsGeo[i].remove();
+					}
+				}
+			}
+			
+		}
+		
+		if(sliderDefault.length > 0) {
+			removeChild(containerSlider);
+			addElements(containerSlider , sliderDefault);		
+		}
+		
+		settingSlider(document.querySelectorAll("#"+containerSlider+" [data-slider-prov]"));
+	} catch (error) {
+		console.log("Error: ", error.message);
+	}
+}
+
+const showGeoSliderAsync = async (sliderContainer) => {
+	let containerSlider = sliderContainer.trim();
+	let elementsGeo = document.querySelectorAll("#"+containerSlider+" [data-slider-prov]");	
+	
+	if(getLocation() == ""){
+		setDefaultLoc();
+	}
+	let provGeoLoc = getLocation().Provincia;
+	
+	let sliderDefault = [];
+	
+	try {
+		for (let i = 0; i < elementsGeo.length; i++){
+			let provincesAvailable =  elementsGeo[i].getAttribute("data-slider-prov").substring(1);
+			
+			if (provGeoLoc == null || provGeoLoc == "") {
+				if (provincesAvailable == null || provincesAvailable == "") {
+					sliderDefault.push(elementsGeo[i]);
+					elementsGeo[i].remove();
+				} else {
+					elementsGeo[i].remove();
+				}
+			} else {
+				if(provincesAvailable == null || provincesAvailable == "") {
+					sliderDefault.push(elementsGeo[i]);
+					elementsGeo[i].remove();
+				} else {
+					if (areProvincesEquals(provGeoLoc, provincesAvailable)) {
+						sliderDefault.push(elementsGeo[i]);
+						elementsGeo[i].remove();
+					} else {
+						elementsGeo[i].remove();
+					}
+				}
+			}
+			
+		}
+		
+		if(sliderDefault.length > 0) {
+			removeChild(containerSlider);
+			addElements(containerSlider , sliderDefault);		
+		}
+		
+		//settingSlider(elementsGeo);
+	} catch (error) {
+		console.log("Error: ", error.message);
+	}
+}

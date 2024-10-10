@@ -1,0 +1,10 @@
+$(MacroApp).ready(function () {
+$("#mc-nav-toggle").on("click", function () {
+        this.classList.toggle("active");
+
+        $('.mc-top-menu-container').toggleClass("hamburguer-opened");
+
+        $('body').toggleClass("body-fixed");
+    });
+
+});

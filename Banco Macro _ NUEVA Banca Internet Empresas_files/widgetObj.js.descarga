@@ -1,0 +1,74 @@
+var CyberBankWidget = {};
+
+CyberBankWidget.TableMenu = {
+    showMenu: function (menu) {
+        $("#" + menu).css("display", "block");
+        $("#" + menu).focus();
+
+        var itemsList = $("#" + menu + " ul li");
+
+        if (itemsList.length >= 1) {
+            $("#" + menu).attr("tabindex", "-1");
+            itemsList[0].focus();
+        }
+    },
+    showMenuControl: function (menu, event) {
+        var keycode;
+        if (window.event)
+            keycode = window.event.keyCode;
+        else if (event)
+            keycode = event.which;
+        else
+            return true;
+
+        if (keycode == 17) {
+            CyberBankWidget.TableMenu.showMenu(menu);
+        }
+
+    },
+    executeMenuOption: function (widgetId, evento, menu, option) {
+        $("#" + menu).css("display", "none");
+        $("#" + menu).append('<input type="hidden" id="out-tabDefault" value="' + option + '" />');
+        executeWidgetAction(widgetId, evento, true, true);
+    },
+    hideMenu: function (menu) {
+        $("#" + menu).css("display", "none");
+    },
+    removeTabIndexInCell: function () {
+        $(".menuTableWidgetContainer").each(function (i, elem) {
+            $(elem).parent().parent().parent().removeAttr("tabindex");
+        });
+    },
+    hideMenuOnLastItem: function (menu, event) {
+        var keycode;
+        if (window.event)
+            keycode = window.event.keyCode;
+        else if (event)
+            keycode = event.which;
+        else
+            return true;
+
+        if (event.shiftKey && event.keyCode == 9) {
+            return true;
+
+        } else if (event.keyCode == 9) {
+            CyberBankWidget.TableMenu.hideMenu(menu);
+        }
+    },
+    hideMenuOnShiftTab: function (menu, event) {
+        var keycode;
+        if (window.event)
+            keycode = window.event.keyCode;
+        else if (event)
+            keycode = event.which;
+        else
+            return true;
+
+        if (event.shiftKey && event.keyCode == 9) {
+            CyberBankWidget.TableMenu.hideMenu(menu);
+
+        } else if (event.keyCode == 9) {
+            return true;
+        }
+    }
+}

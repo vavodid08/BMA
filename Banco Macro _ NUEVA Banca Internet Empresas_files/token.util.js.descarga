@@ -1,0 +1,42 @@
+// *** Encadenamiento de tokens (csrf) ***
+
+var TOKEN; saveToken(""); // init
+
+function saveToken(token){
+	if (typeof(Storage) !== "undefined") {
+		if(localStorage.XSRF_TOKEN_STORED === "undefined")
+			localStorage.setItem("XSRF_TOKEN_STORED", "");
+		
+		if((token === "") && (localStorage.XSRF_TOKEN_STORED === ""))
+			localStorage.setItem("XSRF_TOKEN_STORED", "");
+		
+		if((token !== "") && (localStorage.XSRF_TOKEN_STORED !== "undefined"))
+			localStorage.setItem("XSRF_TOKEN_STORED", token);
+	}
+	TOKEN = token;
+}
+
+function getSavedToken(){
+	if(localStorage.XSRF_TOKEN_STORED !== ""){
+		return localStorage.XSRF_TOKEN_STORED;
+	} 
+	return TOKEN;
+}
+
+/* handle token in requests */
+$.ajaxPrefilter(function( options ) {
+    if ( !options.beforeSend) {
+        options.beforeSend = function (xhr) {
+        	xhr.setRequestHeader('XSRF-TOKEN', getSavedToken());
+        }
+    }
+});
+
+/* handle token in responses */
+function handleTokens (data){
+	var tokenReceived = data.getResponseHeader('XSRF-TOKEN');
+	if (tokenReceived != null){
+		saveToken(tokenReceived);
+	}
+	//showToken(tokenReceived);
+}

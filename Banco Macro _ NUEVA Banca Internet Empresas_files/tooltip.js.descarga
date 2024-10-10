@@ -1,0 +1,37 @@
+//  TOOLTIPS
+
+var mouseOver = false;
+var timeoutVar;
+
+function showTooltip(element, type) {
+	mouseOver = true;
+	timeoutVar = setTimeout(function() {show(element, type);}, 500);
+}
+
+function show(element, type) {
+	if (mouseOver == true) {
+		var idDiv = element.id + "_div";
+		var tooltipId = $("#" + element.id);
+		var position = tooltipId.position();
+		var left, top;
+
+		// bottom
+		if (type == 'bottom') {
+			left = 0;
+			top = position.top + 40;
+		} else { // right
+			left = position.left + tooltipId.width() + 4;
+			top = position.top;
+		}
+
+		$("#" + idDiv).css('left', left).css('top', top).fadeIn().css('display','table');
+	}
+}
+
+function hideTooltip(element) {
+	var idDiv = element.id + "_div";
+	$("#" + idDiv).fadeOut();
+	mouseOver = false;
+	clearTimeout(timeoutVar);
+
+}

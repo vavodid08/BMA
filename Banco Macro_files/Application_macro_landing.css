@@ -1,0 +1,514 @@
+:root {
+--azul-oscuro-bm: #002054;
+--azul-oscuro-bm-rgb: 0, 32, 84;
+--azul-claro-bm: #203ae9;
+--azul-claro-bm-rgb: 32, 58, 233;
+--celeste-bm: #00a6e8;
+--celeste-bm-rgb: 0, 166, 232;
+--rojo-bm: #ff4351;
+--rojo-bm-rgb: 255, 67, 81;
+--rojo-claro-bm: #f8e3e8;
+--rojo-claro-bm-rgb: 248, 227, 232;
+--gris-bm: #d8d7d6;
+--gris-bm-rgb: 216, 215, 214;
+--gris-oscuro-bm: #b6b6b6;
+--gris-oscuro-bm-rgb: 182, 182, 182;
+--rosa-bm: #F08DB9;
+--rosa-bm-rgb: 240, 141, 185;
+}
+
+/* COLORES */
+.azul-bm {color: var(--azul-oscuro-bm) !important;}
+.azul-claro-bm {color: var(--azul-claro-bm) !important;}
+.celeste-bm {color: var(--celeste-bm) !important;}
+.rojo-bm {color: var(--rojo-bm) !important;}
+.rojo-claro-bm {color: var(--rojo-claro-bm) !important;}
+.gris-bm {color: var(--gris-bm) !important;}
+.gris-oscuro-bm {color: var(--gris-oscuro-bm) !important;}
+.rosa-bm {color: var(--rosa-bm) !important;}
+.rosa-bm {color: var(--rosa-bm) !important;}
+
+.bg-azul-bm {background: var(--azul-oscuro-bm);}
+.bg-claro-bm {background: var(--azul-claro-bm);}
+.bg-celeste-bm {background: var(--celeste-bm);}
+.bg-rojo-bm {background: var(--rojo-bm);}
+.bg-rojo-claro-bm {background: var(--rojo-claro-bm);}
+.bg-gris-bm {background: var(--gris-bm);}
+.bg-gris-oscuro-bm {background: var(--gris-oscuro-bm);}
+.bg-rosa-bm {background: var(--rosa-bm);}
+.bg-rosa-bm {background: var(--rosa-bm);}
+
+/* Logo */
+.logo-bm {margin: 10px; max-height: 30px; height: 100%;}
+
+/* TEXTOS */
+.text-bm {font-family: 'Titillium Web', sans-serif;}
+.titulo-bm {font-family: 'Titillium Web', sans-serif; font-weight: bold;}
+.titulo-destacado-regular-bm {font-family: 'Titillium Web', sans-serif; font-size: 4rem;}
+.titulo-destacado-bm {font-family: 'Titillium Web', sans-serif; font-weight: bold; font-size: 4rem;}
+.titulo-destacado-regular-modal-bm {font-family: 'Titillium Web', sans-serif; font-size: 2.8rem;}
+
+.destacado-sms {
+  font-family: 'Titillium Web', sans-serif;
+  font-weight: bold;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  line-height: 1.2;
+  font-size: 0.9rem;
+  text-align: center;
+  color: var(--azul-oscuro-bm) !important;
+}
+
+h7, .h7 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+h7, .h7 {
+  font-size: 0.8rem;
+}
+
+
+h8, .h8 {
+  margin-top: 0;
+  margin-bottom: 0.2rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+h8, .h8 {
+  font-size: 0.6rem;
+}
+
+
+
+
+@media (max-width: 576px) {
+.destacado-sms {font-size: 0.75rem;}
+h7, .h7 {font-size: 0.7rem;}
+.titulo-destacado-bm {font-family: 'Titillium Web', sans-serif; font-weight: bold; font-size: 1.5rem;}
+.titulo-destacado-regular-bm {font-family: 'Titillium Web', sans-serif; font-size: 1.3rem;}
+.titulo-destacado-regular-modal-bm {font-family: 'Titillium Web', sans-serif; font-size: 1.5rem;}
+}
+@media (min-width: 576px) {
+.titulo-destacado-bm {font-family: 'Titillium Web', sans-serif; font-weight: bold; font-size: 2.5rem;}
+.titulo-destacado-regular-bm {font-family: 'Titillium Web', sans-serif; font-size: 2.5rem;}
+.titulo-destacado-regular-modal-bm {font-family: 'Titillium Web', sans-serif; font-size: 2.2rem;}
+}
+@media (min-width: 768px) {
+.destacado-sms {font-size: 1rem;}
+.titulo-destacado-bm {font-family: 'Titillium Web', sans-serif; font-weight: bold; font-size: 3rem;}
+.titulo-destacado-regular-bm {font-family: 'Titillium Web', sans-serif; font-size: 3rem;}
+.titulo-destacado-regular-modal-bm {font-family: 'Titillium Web', sans-serif; font-size: 2.2rem;}
+}
+@media (min-width: 992px) {
+.destacado-sms {font-size: 0.79rem;}
+.titulo-destacado-bm {font-family: 'Titillium Web', sans-serif; font-weight: bold; font-size: 3.5rem;}
+.titulo-destacado-regular-bm {font-family: 'Titillium Web', sans-serif; font-size: 3.5rem;}
+.titulo-destacado-regular-modal-bm {font-family: 'Titillium Web', sans-serif; font-size: 1.8rem;}
+}
+@media (min-width: 1200px) {
+.titulo-destacado-bm {font-family: 'Titillium Web', sans-serif; font-weight: bold; font-size: 3.5rem;}
+.titulo-destacado-regular-bm {font-family: 'Titillium Web', sans-serif; font-size: 3.5rem;}
+.titulo-destacado-regular-modal-bm {font-family: 'Titillium Web', sans-serif; font-size: 2.8rem;}
+}
+@media (min-width: 1400px) {
+.titulo-destacado-bm {font-family: 'Titillium Web', sans-serif; font-weight: bold; font-size: 3.5rem;}
+.titulo-destacado-regular-bm {font-family: 'Titillium Web', sans-serif; font-size: 3.5rem;}
+.titulo-destacado-regular-modal-bm {font-family: 'Titillium Web', sans-serif; font-size: 2.8rem;}
+}
+
+
+/* Botón Form */
+.button-bm {font-family: 'Titillium Web', sans-serif; font-weight: 400; font-size: 1.5rem;}
+
+@media (max-width: 576px) {
+.button-bm {font-family: 'Titillium Web', sans-serif; font-weight: 400; font-size: 1.2rem;}
+}
+@media (min-width: 576px) {
+.button-bm {font-family: 'Titillium Web', sans-serif; font-weight: 400; font-size: 1.3rem;}
+}
+@media (min-width: 768px) {
+.button-bm {font-family: 'Titillium Web', sans-serif; font-weight: 400; font-size: 1.5rem;}
+}
+@media (min-width: 992px) {
+.button-bm {font-family: 'Titillium Web', sans-serif; font-weight: 400; font-size: 1.2rem;}
+}
+@media (min-width: 1200px) {
+.button-bm {font-family: 'Titillium Web', sans-serif; font-weight: 400; font-size: 1.3rem;}
+}
+@media (min-width: 1400px) {
+.button-bm {font-family: 'Titillium Web', sans-serif; font-weight: 400; font-size: 1.5rem;}
+}
+
+
+/* Imagen Header */
+
+.imagen-header{text-align: center; margin: 4px; max-width: 500px;}
+
+@media (max-width: 576px) {
+.imagen-header{text-align: center; margin: 4px; max-width: 80px;}
+}
+@media (min-width: 576px) {
+.imagen-header{text-align: center; margin: 4px; max-width: 100px;}
+}
+@media (min-width: 768px) {
+.imagen-header{text-align: center; max-width: 200px;}
+}
+@media (min-width: 992px) {
+.imagen-header{text-align: center; margin: 4px; max-width: 400px;}
+}
+@media (min-width: 1200px) {
+.imagen-header{text-align: center; margin: 4px; max-width: 400px;}
+}
+@media (min-width: 1400px) {
+.imagen-header{text-align: center; margin: 4px; max-width: 500px;}
+}
+
+
+/* FORM */
+.container-form-bm {
+  /*border-radius: 1.5rem !important;*/
+  /*background-color: white;*/
+  /*padding: 2%;*/
+  /*border-bottom: 18px solid var(--azul-claro-bm);*/
+}
+
+.container-form-bm-header {
+  border-radius: 1rem 1rem 0 0;
+  background-color: white;
+  padding: 1%;
+  margin-bottom: -1px;
+}
+.container-form-bm-footer {
+  border-radius: 0 0 1rem 1rem;
+  background-color: var(--azul-claro-bm);
+  padding: 2%;
+}
+
+
+
+.container-form-bm input[type="text"]::placeholder, .container-form-bm input[type="email"]::placeholder, .container-form-bm input[type="number"]::placeholder, .container-form-bm input[type="tel"]::placeholder {
+  color: var(--celeste-bm) !important;
+  font-weight: bold;
+  font-family: 'Titillium Web', sans-serif; font-weight: 600;
+  font-size: 1.2rem;
+}
+
+
+textarea:focus, input[type="text"]:focus, input[type="password"]:focus, input[type="datetime"]:focus, input[type="datetime-local"]:focus, input[type="date"]:focus, input[type="month"]:focus, input[type="time"]:focus, input[type="week"]:focus, input[type="number"]:focus, input[type="email"]:focus, input[type="url"]:focus, input[type="search"]:focus, input[type="tel"]:focus, input[type="color"]:focus, .uneditable-input:focus {
+  border-color: rgba(32, 58, 233, 0.8);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.0) inset, 0 0 8px rgba(32, 58, 233, 0.0);
+  outline: 0 none;
+}
+
+
+.container-form-bm button {
+  background-color: var(--rojo-bm) !important;
+  color: white;
+  font-weight: bold;
+  font-family: 'Titillium Web', sans-serif; font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.container-form-bm button:hover {
+  background-color: var(--azul-claro-bm) !important;
+  color: white;
+  font-weight: bold;
+  font-family: 'Titillium Web', sans-serif; font-weight: 600;
+  font-size: 1.2rem;
+}
+
+
+
+@media (max-width: 576px) {
+.container-form-bm input[type="text"]::placeholder, .container-form-bm input[type="email"]::placeholder, .container-form-bm input[type="number"]::placeholder, .container-form-bm input[type="tel"]::placeholder {font-size: 0.8rem;}
+.container-form-bm button {font-size: 0.8rem;}
+.container-form-bm button:hover {font-size: 0.8rem;}
+}
+
+@media (min-width: 576px) {
+.container-form-bm input[type="text"]::placeholder, .container-form-bm input[type="email"]::placeholder, .container-form-bm input[type="number"]::placeholder, .container-form-bm input[type="tel"]::placeholder {font-size: 1rem;}
+.container-form-bm button {font-size: 0.8rem;}
+.container-form-bm button:hover {font-size: 0.8rem;}
+}
+
+@media (min-width: 768px) {
+.container-form-bm input[type="text"]::placeholder, .container-form-bm input[type="email"]::placeholder, .container-form-bm input[type="number"]::placeholder, .container-form-bm input[type="tel"]::placeholder {font-size: 1rem;}
+.container-form-bm button {font-size: 1rem;}
+.container-form-bm button:hover {font-size: 1rem;}
+}
+
+@media (min-width: 992px) {
+.container-form-bm input[type="text"]::placeholder, .container-form-bm input[type="email"]::placeholder, .container-form-bm input[type="number"]::placeholder, .container-form-bm input[type="tel"]::placeholder {font-size: 1.1rem;}
+.container-form-bm button {font-size: 1.1rem;}
+.container-form-bm button:hover {font-size: 1.1rem;}
+}
+
+@media (min-width: 1200px) {
+.container-form-bm input[type="text"]::placeholder, .container-form-bm input[type="email"]::placeholder, .container-form-bm input[type="number"]::placeholder, .container-form-bm input[type="tel"]::placeholder {font-size: 1.2rem;}
+.container-form-bm button {font-size: 1.2rem;}
+.container-form-bm button:hover {font-size: 1.2rem;}
+}
+
+@media (min-width: 1400px) {
+.container-form-bm input[type="text"]::placeholder, .container-form-bm input[type="email"]::placeholder, .container-form-bm input[type="number"]::placeholder, .container-form-bm input[type="tel"]::placeholder {font-size: 1.2rem;}
+.container-form-bm button {font-size: 1.2rem;}
+.container-form-bm button:hover {font-size: 1.2rem;}
+}
+
+
+
+/* BENEFICIOS */
+
+/* Titulos Beneficios */
+.titulo-beneficios-bm {font-family: 'Titillium Web', sans-serif; font-size: 1.5rem; line-height: 1.7rem; color: var(--azul-claro-bm);}
+
+.beneficios-bm {
+  min-width: 190px;
+  max-height: 208px;
+  /*border-radius: 1.5rem 1.5rem 0 0;*/
+  /*background-color: white;*/
+  /*padding: 6%;*/
+  /*border-bottom: 18px solid var(--azul-claro-bm);*/
+  text-align: center;
+}
+.beneficios-bm-header {
+  border-radius: 1rem 1rem 0 0;
+  background-color: white;
+  padding: 4%;
+  margin-bottom: -1px;
+}
+.beneficios-bm-footer {
+  border-radius: 0 0 1rem 1rem;
+  background-color: var(--azul-claro-bm);
+  padding: 4%;
+}
+
+.beneficios-bm img {max-width: 45px; margin-bottom: 6%;}
+
+
+
+@media (max-width: 576px) {
+.titulo-beneficios-bm {font-family: 'Titillium Web', sans-serif; font-size: 1.2rem; line-height: 1.5rem; color: var(--azul-claro-bm);}
+.beneficios-bm img {max-width: 35px; margin-bottom: 6%;}
+}
+@media (min-width: 576px) {
+.titulo-beneficios-bm {font-family: 'Titillium Web', sans-serif; font-size: 1.2rem; line-height: 1.5rem; color: var(--azul-claro-bm);}
+.beneficios-bm img {max-width: 40px; margin-bottom: 6%;}
+}
+@media (min-width: 768px) {
+.titulo-beneficios-bm {font-family: 'Titillium Web', sans-serif; font-size: 1.5rem; line-height: 1.7rem; color: var(--azul-claro-bm);}
+.beneficios-bm img {max-width: 45px; margin-bottom: 6%;}
+}
+@media (min-width: 992px) {
+.titulo-beneficios-bm {font-family: 'Titillium Web', sans-serif; font-size: 1.2rem; line-height: 1.5rem; color: var(--azul-claro-bm);}
+.beneficios-bm img {max-width: 40px; margin-bottom: 6%;}
+}
+@media (min-width: 1200px) {
+.titulo-beneficios-bm {font-family: 'Titillium Web', sans-serif; font-size: 1.5rem; line-height: 1.7rem; color: var(--azul-claro-bm);}
+.beneficios-bm img {max-width: 45px; margin-bottom: 6%;}
+}
+@media (min-width: 1400px) {
+.titulo-beneficios-bm {font-family: 'Titillium Web', sans-serif; font-size: 1.5rem; line-height: 1.7rem; color: var(--azul-claro-bm);}
+.beneficios-bm img {max-width: 45px; margin-bottom: 6%;}
+}
+
+
+
+
+/* Simulador */
+.container-simulador-bm {
+  /*border-radius: 1.5rem !important;*/
+  /*background-color: white;*/
+  /*padding: 2%;*/
+  /*border-bottom: 18px solid var(--azul-claro-bm);*/
+}
+
+.container-simulador-bm-header {
+  border-radius: 1rem 1rem 0 0;
+  background-color: white;
+  padding: 1%;
+  margin-bottom: -1px;
+}
+.container-simulador-bm-footer {
+  border-radius: 0 0 1rem 1rem;
+  background-color: var(--azul-claro-bm);
+  padding: 2%;
+}
+
+
+
+
+
+.container-simulador-bm button {
+  background-color: var(--celeste-bm) !important;
+  color: white;
+  font-weight: bold;
+  font-family: 'Titillium Web', sans-serif; font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.container-simulador-bm button:hover {
+  background-color: var(--rojo-bm) !important;
+  color: white;
+  font-weight: bold;
+  font-family: 'Titillium Web', sans-serif; font-weight: 600;
+  font-size: 1.2rem;
+}
+
+
+/* Listado numérico */
+.lista-bm ol{
+      counter-reset: li;
+      list-style: none;
+      *list-style: decimal;
+      font: 15px 'Titillium Web', sans-serif;
+      padding: 0;
+      text-shadow: 0 1px 0 rgba(255,255,255,.5);
+}
+
+ .lista-bm button {
+   background-color: var(--azul-claro-bm) !important;
+   color: white;
+   font-weight: bold;
+   font-family: 'Titillium Web', sans-serif; font-weight: 600;
+   font-size: 1.2rem;
+ }
+
+
+.rounded-list a{
+   position: relative;
+   display: block;
+   padding: .1em .1em .1em 2em;
+   margin: .5em 3em 0em 3em;
+   color: var(--celeste-bm);
+   text-decoration: none;
+   border-radius: .1em;
+   transition: all .3s ease-out;
+   font-weight: bold;
+   font-family: 'Titillium Web', sans-serif; font-weight: 600;
+   font-size: 1.8rem;
+ }
+
+ .rounded-list a:before{
+   content: counter(li);
+   counter-increment: li;
+   position: absolute;
+   left: -1em;
+   top: 60%;
+   margin-top: -1.6em;
+   background: var(--celeste-bm);
+   color: white;
+   height: 2.5em;
+   width: 2.5em;
+   line-height: 2em;
+   border: .3em solid #fff;
+   text-align: center;
+   font-weight: bold;
+   border-radius: 2em;
+   transition: all .3s ease-out;
+ }
+
+
+ @media (max-width: 576px) {
+.rounded-list a{
+      margin: .5em 1em 0em 1em;
+    }
+ }
+
+@media (min-width: 576px) {
+.rounded-list a {margin: .5em 1em 0em 1em;}
+}
+@media (min-width: 768px) {
+.rounded-list a {margin: .5em 5em 0em 5em;}
+}
+@media (min-width: 992px) {
+.rounded-list a {margin: .5em 1em 0em 1em;}
+}
+@media (min-width: 1200px) {
+.rounded-list a {margin: .5em 2em 0em 2em;}
+}
+@media (min-width: 1400px) {
+.rounded-list a {margin: .5em 3em 0em 3em;}
+}
+
+
+
+.rounded-list-modal a{
+   position: relative;
+   display: block;
+   padding: .1em .1em .5em 2em;
+   margin: .5em 1em 0em 1em;
+   color: var(--celeste-bm);
+   text-decoration: none;
+   border-radius: .1em;
+   transition: all .3s ease-out;
+   font-weight: bold;
+   font-family: 'Titillium Web', sans-serif; font-weight: 600;
+   font-size: 1.2rem;
+   text-align: left;
+ }
+
+ .rounded-list-modal a:before{
+   content: counter(li);
+   counter-increment: li;
+   position: absolute;
+   left: -1em;
+   top: 60%;
+   margin-top: -1.6em;
+   background: var(--celeste-bm);
+   color: white;
+   height: 2.5em;
+   width: 2.5em;
+   line-height: 2em;
+   border: .3em solid #fff;
+   text-align: center;
+   font-weight: bold;
+   border-radius: 2em;
+   transition: all .3s ease-out;
+ }
+
+
+ @media (max-width: 576px) {
+.rounded-list-modal a{
+      margin: .5em 1em 0em 1em;
+    }
+ }
+
+@media (min-width: 576px) {
+.rounded-list-modal a {margin: .5em 1em 0em 1em;}
+}
+@media (min-width: 768px) {
+.rounded-list-modal a {margin: .5em 5em 0em 5em;}
+}
+@media (min-width: 992px) {
+.rounded-list-modal a {margin: .5em 1em 0em 1em;}
+}
+@media (min-width: 1200px) {
+.rounded-list-modal a {margin: .5em 2em 0em 2em;}
+}
+@media (min-width: 1400px) {
+.rounded-list-modal a {margin: .5em 1em 0em 1em;}
+}
+
+/* Separador */
+hr.separador_bm {
+    overflow: visible;
+    padding: 0;
+    border: none;
+    border-top: medium double #333;
+    color: #333;
+    text-align: center;
+}
+hr.separador_bm:after {
+    content: "°";
+    display: inline-block;
+    position: relative;
+    top: -0.7em;
+    font-size: 1.5em;
+    padding: 0 0.25em;
+    background: white;
+}

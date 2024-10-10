@@ -1,0 +1,99 @@
+tabsMenu = {
+	
+	togglePanels: function() {
+		tabsMenu.showPanels();
+		tabsMenu.hidePanels(); //TODO Comment in dev mode
+		tabsMenu.chopLongNames();
+	},
+	
+	// perform JavaScript after the document is scriptable. 
+	showPanels: function() {
+		$("#menu-dys").tabs({event:'mouseenter'});
+	},
+	
+	hidePanels: function() {
+		$("div.sub-menu").mouseleave(function() {
+			//Hide the panel
+			$(this).parent().addClass("ui-tabs-hide");
+			//Also unselect the tab 
+			var panelID = $(this).parent().attr("id");
+			$("#menu-dys li span a[href=#" + panelID + "]").parent().parent().attr("class", "ui-state-default ui-corner-top");
+		});
+		
+	},
+	
+	chopLongNames: function() {
+		var LIMIT = 20; //So that sections don't overflow in IE6
+		var whole;
+		var chopped;
+		
+		$("div.seccion ul.nested-ul li span").each(function(index) {
+			whole = $(this).text();
+			
+			if (whole.length > LIMIT) {
+				$(this).bind('mouseover', { aText: whole }, function(event) {
+					$(this).text(event.data.aText);
+				});
+
+				chopped = $(this).text().substr(0, LIMIT) + "...";
+				$(this).bind('mouseout', { aText: chopped }, function(event) {
+					$(this).text(event.data.aText);
+				});
+					
+				$(this).text(chopped);
+			}
+		});
+		
+	},
+	
+	submitMenuTabsByAjax: function(submenuName, workflowId, breadcrumbs,moduleFecha) {
+	  	var str = '';
+		var formElement= '';
+		var seleccionado;
+        
+		if(moduleFecha == undefined){
+		  moduleFecha = seleccionado ;
+		}
+		else {
+		  seleccionado = moduleFecha;
+		}
+        
+        lastSubmenuName = removeBr(submenuName);
+		
+		str += "seleccion"  + '='  + encodeURI(workflowId) + '&';
+
+		formElement = document.getElementById('uuid');
+		str += "uuid"  + '='  + encodeURI(formElement.value) + '&';
+
+	  	formElement = document.getElementById('IDContexto');
+	  	if ( formElement != null){
+			str += formElement.name  + '='  + encodeURI(formElement.value) + '&';
+		}
+
+		str += "submenuSeleccionado"  + '='  + encodeURI('Apoyo') + '&';
+		
+		str = str.substr(0, (str.length - 1)); 
+		http.open('POST', 'index', false);
+		http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		http.setRequestHeader('Get-Form','true');
+				
+		try{
+	   		http.send(str);
+	   		$("div.sub-menu").trigger('mouseleave'); //Hide the menu when user clicks on a link
+  		}catch(e){
+        	modalError.alert('No se puede establecer conexion con el Servidor');
+        
+   		}
+	    if (http.readyState == 4) {
+	    	hideContainer();
+			cargarPrimerLayout(http.responseText, breadcrumbs, workflowId,moduleFecha);
+			fillUuid();
+			//MJM: objeto utils
+			
+			CyberBank.utils.resetButtonCursors();			
+			  
+			showModalWindow(); 		
+		}
+	}	
+	
+}

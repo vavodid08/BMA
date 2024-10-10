@@ -1,0 +1,448 @@
+/*Array para mantener los ids de los widget que son recargables*/
+var widgetReloadableIds = [];
+var widgetAsyncIds = [];
+var widgetsRelodablesAlerts = [];
+
+/*Funcion para recarga de widgets*/
+function reloadWidgets() {
+	reloadTemplateWidgets();
+	reloadAsyncWidgets();
+}
+
+
+function reloadTemplateWidgets() {
+	for (i = 0; i < widgetReloadableIds.length; i++) { 
+		if (!(typeof(widgetReloadableIds[i])  === "undefined") ) {
+			var uuid = $('#uuid').val();
+			
+			var str="uuid="+encodeURIComponent(uuid)+"&";
+			str+="widgetId="+encodeURIComponent(widgetReloadableIds[i]);
+			var dataToSend="";
+			var p_temp;
+			if (CyberBank.encryption.enable) {
+				p_temp = getRandomPassword();
+				str = JSON.stringify(createSecureRequest(str, p_temp));
+				dataToSend = {parameters : str}
+			}else{
+				dataToSend = str;
+			}
+			if($("#"+widgetReloadableIds[i]+"_hideOnReload").length >0){
+				$("#"+widgetReloadableIds[i]+"_hideOnReload").css('display','none');
+			}
+			$.ajaxInvoker({type: 'POST',
+					url: 'widget/update.do',
+		            headers: { 'Content-type': 'application/x-www-form-urlencoded; charset=UTF8', widgetId : widgetReloadableIds[i] },
+		            data: dataToSend,
+		            async: true
+	        }).done(
+	        	reloadWidget(widgetReloadableIds[i],"templateWidget_",p_temp)
+	        );
+		}
+	}
+	
+}
+
+function reloadAsyncWidgets() {
+	for (i = 0; i < widgetAsyncIds.length; i++) { 
+		if (!(typeof(widgetAsyncIds[i])  === "undefined") ) {
+			var uuid = $('#uuid').val();
+			var params="uuid="+encodeURIComponent(uuid)+"&";
+			params+="widgetId="+encodeURIComponent(widgetAsyncIds[i])+"&";
+			params+="asyncWidget="+encodeURIComponent('true');
+			var p_temp;
+			var dataToSend="";
+			if (CyberBank.encryption.enable) {
+				p_temp = getRandomPassword();
+				params = JSON.stringify(createSecureRequest(params, p_temp));
+				dataToSend = {parameters : params}
+			}else{
+				dataToSend = params;
+			}
+			
+			/*var uuid = $('#uuid').val();*/
+			$.ajaxInvoker({type: 'POST',
+					url: 'widget/update.do',
+		            headers: { 'Content-type': 'application/x-www-form-urlencoded; charset=UTF8', widgetId : widgetAsyncIds[i] },
+		            data: dataToSend,
+		            async: true,
+		        }).done(reloadWidget(widgetAsyncIds[i],"",p_temp));		            
+		}
+	}
+	widgetAsyncIds.length=0;
+	}
+
+/*Es necesario definir una nueva funcion para el DONE de ajax para pasar como parametro el index del widget*/
+var reloadWidget = function(widgetId,prefix,p_temp) {
+	return function(result) {
+		var respText = result;
+		if (CyberBank.encryption.enable) {
+			respText = resolveSecureResponse(result, p_temp);
+		}
+		
+		// $("#"+prefix+widgetId).replaceWith(result);
+		if(respText.indexOf("noRefresh") != 0 ){
+			$("#"+prefix+widgetId).html('').append(respText);
+		}
+		if($("#"+widgetReloadableIds[i]+"_hideOnReload").length >0){
+			$("#"+widgetReloadableIds[i]+"_hideOnReload").css('display','block');
+		}
+	}
+}
+
+
+function updateWidgetContext(widget_id) {
+	
+		var real_widget_id = widget_id;
+		var widgetCollectionJar = $("#"+widget_id).attr("widgetCollectionJar");
+	
+		if (widgetCollectionJar){
+			real_widget_id = widget_id.substring(0,widget_id.indexOf("_"));
+		}
+		
+	
+	
+		var uuid = $('#uuid').val();
+		var pars= $("#"+widget_id+"_outParams").val();
+		var paramArray = pars.split('||');
+		var parameters = "";
+		
+		parameters+=addParameters(paramArray);
+		parameters+="uuid="+encodeURIComponent(uuid)+"&";
+		parameters+="widgetId="+encodeURIComponent(real_widget_id);
+		
+		var dataToSend="";
+		if (CyberBank.encryption.enable) {
+			var p_temp = getRandomPassword();
+			parameters = JSON.stringify(createSecureRequest(parameters, p_temp));
+			dataToSend = {parameters : parameters}
+		}else{
+			dataToSend = parameters;
+		}
+		
+		
+		$.ajaxInvoker({type: 'POST',
+			url: 'widget/updateContext.do',
+			headers: { 'Content-type': 'application/x-www-form-urlencoded; charset=UTF8'},
+			data: dataToSend,
+		    async: false
+		   }).done();		            
+	}
+
+function executeWidgetAction(widget_id, action_id,updateContext) {
+	
+	var real_widget_id = widget_id;
+	
+	if($("#"+widget_id+action_id).length>0){
+		var actionButtonCollection = $("#"+widget_id+action_id).attr("collectionActionButton");
+		if (actionButtonCollection=="true"){
+			
+			real_widget_id = widget_id.substring(0,widget_id.indexOf("_"));
+		}
+		
+		if (updateContext){
+			updateWidgetContext(real_widget_id);
+		}
+		$("#"+widget_id+action_id).click();
+	}
+	else{
+		var uuid = $('#uuid').val();
+		var pars= $("#"+widget_id+"_outParams").val();
+		
+		if ((typeof(pars)  === "undefined") ){
+			pars="";
+		}
+		
+		var paramArray = pars.split('||');
+		var parameters = "";
+		
+		parameters+=addParameters(paramArray);
+		parameters+="uuid="+encodeURIComponent(uuid)+"&";
+		parameters+="widgetId="+encodeURIComponent(widget_id)+"&";
+		parameters+="actionId="+encodeURIComponent(action_id)+"&";
+		parameters+="updateContext="+encodeURIComponent(updateContext);
+		
+		var dataToSend="";
+		if (CyberBank.encryption.enable) {
+			var p_temp = getRandomPassword();
+			parameters = JSON.stringify(createSecureRequest(parameters, p_temp));
+			dataToSend = {parameters : parameters}
+		}else{
+			dataToSend = parameters;
+		}
+		
+		$.ajaxInvoker({type: 'POST',
+			url: 'widget/excuteService.do',
+			headers: { 'Content-type': 'application/x-www-form-urlencoded; charset=UTF8'},
+			data: dataToSend,
+		    async: true
+		   }).done(function(data, textStatus, resp) {
+	
+				var respText = data;
+					if (CyberBank.encryption.enable) {
+					respText = resolveSecureResponse(data, p_temp);
+					}
+				if(respText.indexOf("noRefresh") != 0 ){
+					$('#'+widget_id+'_htmlContent').html(respText);
+			   }
+		});
+	}	
+}
+
+function executeWidgetAction(widget_id, action_id,updateContext, is_async) {
+	
+	var real_widget_id = widget_id;
+
+	if($("#"+widget_id+action_id).length>0){
+		var actionButtonCollection = $("#"+widget_id).attr("collectionActionButton");
+		if (actionButtonCollection=="true"){
+			real_widget_id = widget_id.substring(0,widget_id.indexOf("_"));
+		}
+		
+		if (updateContext){
+			updateWidgetContext(widget_id);
+		}
+		$("#"+widget_id+action_id).click();
+	}
+	else{
+		var uuid = $('#uuid').val();
+		var pars= $("#"+widget_id+"_outParams").val();
+		
+		if ((typeof(pars)  === "undefined") ){
+			pars="";
+		}
+		
+		var paramArray = pars.split('||');
+		var parameters = "";
+		
+		parameters+=addParameters(paramArray);
+		parameters+="uuid="+encodeURIComponent(uuid)+"&";
+		parameters+="widgetId="+encodeURIComponent(widget_id)+"&";
+		parameters+="actionId="+encodeURIComponent(action_id)+"&";
+		parameters+="updateContext="+encodeURIComponent(updateContext);
+		
+		var dataToSend="";
+		if (CyberBank.encryption.enable) {
+			var p_temp = getRandomPassword();
+			parameters = JSON.stringify(createSecureRequest(parameters, p_temp));
+			dataToSend = {parameters : parameters}
+		}else{
+			dataToSend = parameters;
+		}
+		
+		$.ajaxInvoker({type: 'POST',
+			url: 'widget/excuteService.do',
+			headers: { 'Content-type': 'application/x-www-form-urlencoded; charset=UTF8'},
+			data: dataToSend,
+		    async:is_async
+		  }).done(function(data, textStatus, resp) {
+	    		var respText = data;
+	    		if (CyberBank.encryption.enable) {
+					if (typeof data === "string") {
+						data = $.parseJSON(data);
+					}
+	
+					respText = resolveSecureResponse(data, p_temp);
+				}
+				if(respText.indexOf("noRefresh") != 0 ){
+					$('#'+widget_id+'_htmlContent').html(respText);
+				}
+		});
+	}	
+}
+
+function executeWidgetActionC(widget_id, action_id,updateContext, container) {
+	
+	if($("#"+widget_id+action_id).length>0){
+		updateWidgetContext(widget_id);
+		$("#"+widget_id+action_id).click();
+	}
+	else{
+		var uuid = $('#uuid').val();
+		var pars= $("#"+widget_id+"_outParams").val();
+		
+		if ((typeof(pars)  === "undefined") ){
+			pars="";
+		}
+		
+		var paramArray = pars.split('||');
+		var parameters = "";
+		
+		parameters+=addParameters(paramArray);
+		parameters+="uuid="+encodeURIComponent(uuid)+"&";
+		parameters+="widgetId="+encodeURIComponent(widget_id)+"&";
+		parameters+="actionId="+encodeURIComponent(action_id)+"&";
+		parameters+="updateContext="+encodeURIComponent(updateContext);
+	
+		var dataToSend="";
+		if (CyberBank.encryption.enable) {
+			var p_temp = getRandomPassword();
+			parameters = JSON.stringify(createSecureRequest(parameters, p_temp));
+			dataToSend = {parameters : parameters}
+		}else{
+			dataToSend = parameters;
+		}
+		
+		$.ajaxInvoker({type: 'POST',
+			url: 'widget/excuteService.do',
+			headers: { 'Content-type': 'application/x-www-form-urlencoded; charset=UTF8'},
+			data: dataToSend,
+		    async: true,
+		    success: function(data, textStatus, resp) {
+		    var respText = data;
+			if (CyberBank.encryption.enable) {	
+				if (typeof data === "string") {
+					data = $.parseJSON(data);
+				}
+	
+				respText = resolveSecureResponse(data, p_temp);
+			}
+				if(respText.indexOf("noRefresh") != 0 ){
+					$('#'+widget_id+'_htmlContent').find('#'+container).html(respText);
+			   }
+		    }
+		});
+		
+	}	
+}
+
+function executeOnLoadWidgetAction(widget_id, action_id) {
+	
+	var uuid = $('#uuid').val();
+	
+	
+	var parameters="uuid="+encodeURIComponent(uuid)+"&";
+	parameters+="widgetId="+encodeURIComponent(widget_id)+"&";
+	parameters+="actionId="+encodeURIComponent(action_id)+"&";
+	parameters+="onLoadAction="+encodeURIComponent('true');
+	
+	var dataToSend="";
+	if (CyberBank.encryption.enable) {
+		var p_temp = getRandomPassword();
+		parameters = JSON.stringify(createSecureRequest(parameters, p_temp));
+		dataToSend = {parameters : parameters}
+	}else{
+		dataToSend = parameters;
+	}
+	
+	$.ajaxInvoker({type: 'POST',
+		url: 'widget/excuteService.do',
+		headers: { 'Content-type': 'application/x-www-form-urlencoded'},
+	    data: dataToSend,
+	    async: true
+	    }).done(function(data, textStatus, resp) {
+	    var respText = data;
+			if (CyberBank.encryption.enable) {
+				if (typeof data === "string") {
+					data = $.parseJSON(data);
+				}
+
+				respText = resolveSecureResponse(data, p_temp);
+			}
+			$('#'+widget_id).html(respText);
+   });
+	
+}
+
+function setTimerWidgetAction(widget_id, action_id, unicWidget_id, period, uuidInit){
+	
+	$.timer(period, function (timerExecute) {
+		try{
+			var uuid = $('#uuid').val();
+			if(uuid!=uuidInit || typeof $( '#periodic_'+widget_id ).val() === "undefined"){
+				timerExecute.stop();
+				return;
+			}else{
+				if($( '#periodic_'+widget_id ).data("unicwidgetid")==unicWidget_id){
+					executeWidgetAction(widget_id, action_id,true);
+				}
+				else{
+					timerExecute.stop();
+				}
+			}
+		}
+		catch(err) {
+			timerExecute.stop();
+			$('#'+widget_id).html(err);
+		}
+	});
+}
+
+
+function executeWidgetActionWithCallBack(widget_id, action_id,updateContext,onDone) {
+
+	var real_widget_id = widget_id;
+	
+	if($("#"+widget_id+action_id).length>0){
+		var actionButtonCollection = $("#"+widget_id+action_id).attr("collectionActionButton");
+		if (actionButtonCollection=="true"){
+			
+			real_widget_id = widget_id.substring(0,widget_id.indexOf("_"));
+		}
+		
+		if (updateContext){
+			updateWidgetContext(real_widget_id);
+		}
+		$("#"+widget_id+action_id).click();
+	}
+	else{
+		var uuid = $('#uuid').val();
+		var pars= $("#"+widget_id+"_outParams").val();
+		
+		if ((typeof(pars)  === "undefined") ){
+			pars="";
+		}
+		
+		var paramArray = pars.split('||');
+		var parameters = "";
+		
+		for ( var i = 0; i < paramArray.length; i++) {
+			var elem=$("#"+paramArray[i]);
+			if ($(elem).is('input') || $(elem).is('select') || $(elem).is('checkbox') || $(elem).is('radio')) {
+				valor = $(elem).val();
+			} else { 
+				valor = $(elem).html();
+			}
+					
+		parameters+=paramArray[i]+"="+encodeURIComponent(valor)+"&";
+		}
+		parameters+= 'uuid='+uuid+'&widgetId='+widget_id+'&actionId='+action_id+'&updateContext='+updateContext;
+		
+		var dataToSend="";
+		if (CyberBank.encryption.enable) {
+			var p_temp = getRandomPassword();
+			parameters = JSON.stringify(createSecureRequest(parameters, p_temp));
+			dataToSend = {parameters : parameters}
+		}else{
+			dataToSend = parameters;
+		}
+		
+		$.ajaxInvoker({type: 'POST',
+			url: 'widget/excuteService.do',
+			headers: { 'Content-type': 'application/x-www-form-urlencoded; charset=UTF8'},
+		    data: dataToSend,
+		    async: true
+		  }).done(function(data, textStatus, resp) {
+				var respText = data;
+				if (CyberBank.encryption.enable) {
+					respText = resolveSecureResponse(data, p_temp);
+				}
+				onDone(respText);
+		  });
+	}	
+};
+
+function addParameters(paramArray) {
+	var parameters = "";
+	for (var i = 0; i < paramArray.length; i++) {
+		var elem = $("#" + paramArray[i]);
+		if ($(elem).is('input') || $(elem).is('select')
+				|| $(elem).is('checkbox') || $(elem).is('radio')) {
+			valor = $(elem).val();
+		} else {
+			valor = $(elem).html();
+		}
+		parameters += paramArray[i] + "=" + encodeURIComponent(valor) + "&";
+	}
+	return parameters;
+}
+

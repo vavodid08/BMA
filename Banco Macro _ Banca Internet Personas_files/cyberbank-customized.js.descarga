@@ -1,0 +1,1721 @@
+function closeSesion(){
+	
+	/*Variables de parametrizacion de encuestas
+	 * Si el cierre de sesion ocurrio por inactivedad se debe conservar el valor tipoCierre en 1
+	 * caso contrario se setea en 0*/
+    CyberBank.qualtrics.addSessionStorageProp("user.cierreSesion","1");
+    var tipoCierre = window.sessionStorage.getItem("user.tipoCierre");
+    
+    if("1" != tipoCierre){
+    	CyberBank.qualtrics.addSessionStorageProp("user.tipoCierre","0");
+    }
+
+   	var uuID = $("#uuid").val();
+   	var parameters = 'uuid='+uuID;
+   	var dataToSend="";
+	if (CyberBank.encryption.enable) {
+		var p_temp = getRandomPassword();
+		parameters = JSON.stringify(createSecureRequest(parameters, p_temp));
+		dataToSend = {parameters : parameters}
+	}else{
+		dataToSend = parameters;
+	}
+   	$.ajax({
+		  data: dataToSend,
+		  url: "logout",
+		  type: "POST",
+  		  async:false,
+		  success: function(data, textStatus, resp) {
+			  var respText = data;
+				if (CyberBank.encryption.enable) {
+					respText = resolveSecureResponse(data, p_temp);
+				}
+			}
+		});
+}
+
+function closeSesionAndReload(){
+var uuID = $("#uuid").val();
+   	var parameters = 'uuid='+uuID;
+   	var dataToSend="";
+	if (CyberBank.encryption.enable) {
+		var p_temp = getRandomPassword();
+		parameters = JSON.stringify(createSecureRequest(parameters, p_temp));
+		dataToSend = {parameters : parameters}
+	}else{
+		dataToSend = parameters;
+	}
+   	$.ajax({
+		  data: dataToSend,
+		  url: "logout",
+		  type: "POST",
+  		  async:false,
+		  success: function(data, textStatus, resp) {
+			  var respText = data;
+				if (CyberBank.encryption.enable) {
+					respText = resolveSecureResponse(data, p_temp);
+				}
+				window.location.reload();
+			},
+		  
+		});
+}
+
+
+function updateActualFocus(elementId) {
+	$("#elementWithFocus").val(elementId);
+	CyberBank.stateFocus.previousElementWithFocus = elementId;
+}
+
+function executePreConditionWhenOpenWorkflow(){
+	//limpio la informacion de estado
+	CyberBank.stateFocus.actualState = '';
+	CyberBank.stateFocus.previousState = '';
+}
+
+function getExtraDataOnFail(data, textStatus, resp){
+	return "";
+}
+
+function onLoadFunctions(interval, expirationDays) {
+		
+		//Los intervalos solo se ejecutan si son positivos		
+		if (interval > 0) {
+			setInterval("reload()", interval);
+		}
+	    	
+	    if (expirationDays > 0 && expirationDays < 6) {	
+			setTimeout("expirationDaysMessage(" + expirationDays + ")", 2000);
+	    }    
+	    
+	    if(document.getElementById("user_id")!=null ){
+	    	getUserName();
+	    }
+	    CyberBank.utils.createTimeOutManager();
+		tabsMenu.togglePanels();
+		$("div.sub-menu").trigger('mouseleave'); //To avoid first tab being shown.
+		inicializaMenuVertical();
+		
+}
+
+function  submitSort(collectionID, columna, pageNumber, idcontexto){
+    
+        var str = '';
+		var formElement= '';
+
+		updateHiddenColumn(collectionID+'_columnFilter');
+
+		formElement = document.getElementById('uuid');
+		str += formElement.name  + '='  + encodeURIParams(formElement.value) + '&';
+
+		str = str.substr(0, (str.length - 1)); 
+		http.open('POST', 'collection/sort.do', false);
+		http.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+		http.setRequestHeader('Connection', 'close');
+
+		http.setRequestHeader('Content-length', str.length);
+		http.setRequestHeader('colId', collectionID);
+        http.setRequestHeader('columna', columna);
+        http.setRequestHeader('pageNumber', pageNumber);
+        http.setRequestHeader('IDContexto', idcontexto);
+
+        
+		http.send(str);
+		
+	    if (http.readyState == 4) {
+	    	
+           	var tabla =document.getElementById(collectionID);
+           	if (tabla.parentNode.id=='groupConsolidada') {
+           		tabla.parentNode.parentNode.innerHTML = http.responseText;
+           	} else {
+           		tabla.parentNode.innerHTML = http.responseText;
+            }
+            hideColumns(collectionID+'_columnFilter',collectionID);
+            validateMaxColumnFilter(collectionID+'_columnFilter', $('#' + collectionID + '_columnFilter_maxColumnFilter').val());
+		}
+    
+}
+
+function checkEntry() {
+		var cookiName = document.getElementById("user_id").value;
+		setCookieName('username', cookiName, 365);
+		
+		var usernameaux = cookiName;
+		
+		usernameaux = usernameaux.replace(/^\s*|\s*$/g,"");
+	
+		if (usernameaux == "") {
+			modalError.alert("El usuario no puede ser vacío");
+			return false;
+		}
+		
+		if ($("#pass_id").val() == '') {
+			modalError.alert("La password no puede ser vacía");
+			return false;
+		}
+		
+		$("#login_form").submit();
+
+	}
+
+
+
+/******************* FLOAT FUNCTIONS **************/
+/*******************************************************/
+
+function copyFromUnmasked(obj) {
+    var unmasked = obj.getAttribute('unmasked');
+    unmasked = unmasked.replace(/\./g, ',');
+    obj.value = unmasked;
+}
+
+function copyToUnmasked(obj) {
+//	obj.value= obj.value.replace(/\./g, ',');
+    var parts = CB.automask.divideAndConquer(obj.value);
+    var integerPart = parts[0].replace(/\,/g, '');
+    var decimalPart = parts[1].replace(/\,/g, '');
+    if (CB.automask.validateInteger(integerPart) && CB.automask.validateInteger(decimalPart)) {
+	try {
+		if(typeof obj.setAttribute == 'function'){
+        		obj.setAttribute('unmasked', CB.automask.getUnformattedNumberForValidation(obj.value));
+        	}
+    } catch(err) {
+		console.log(err);
+	}
+    }
+}
+
+function checkFloat(element, event) {
+	
+	if (getCharacterPressed(event) == "Unidentified") {
+		event.preventDefault();
+		return false;
+	}
+	if (event.keyCode == 190 || event.keyCode == 110 || event.keyCode == 188) {
+		if(element.value==""){
+			event.preventDefault();
+			return false;
+		}
+		if (isFinite(element.value)) {
+			// Add the comma to the value of the input field
+			element.value = element.value + ',';
+		} 
+//		else {
+//			alert('Número inválido');
+//		}
+	}
+
+	if (event.keyCode <= 57 || (event.keyCode >= 96 && event.keyCode <= 105)
+			|| event.keyCode == 109) {
+		return true;
+	} else if (event.ctrlKey){
+		return true;
+	}
+	// hack for IE6, that doesn't recognize event.preventDefault()
+	if (event.preventDefault !== undefined) {
+		event.preventDefault();
+	} else {
+		event.returnValue = false;
+	}
+}
+
+var CB = {};
+
+CB.automask={};
+
+CB.automask={
+	
+	decSeparator: 'nulo',
+	thousSeparator: 'nulo',
+	mask: 'nulo',
+	strippedValue: 'nulo',
+		
+    applyMask: function(obj, decimalQty, decimalSeparator, thousandSeparator, maskPattern){
+	try {
+		var errorMessage = '';
+		this.decSeparator = decimalSeparator;
+		this.thousSeparator = thousandSeparator;
+		this.mask = maskPattern;
+//		var str = obj.value;
+		var auxDecSeparator = decimalSeparator;
+		
+		if(typeof obj.getAttribute == 'function'){
+			var str = obj.getAttribute('unmasked');
+			this.strippedValue = obj.getAttribute('unmasked');
+		    Number.prototype.formatMoney = function(c, d, t){
+					var n = this, 
+			        c = isNaN(c = Math.abs(c)) ? 2 : c, 
+			        d = d == undefined ? "," : d, 
+			        t = t == undefined ? "." : t, 
+			        s = n  < 0 ? "-" : "", 
+			        i = parseInt(n = Math.abs(+n || 0).toFixed(c)) + "", 
+			        j = (j = i.length) > 3 ? j % 3 : 0;
+					return s + (j ? i.substr(0, j) + t : "") + i.substr(j).replace(/(\d{3})(?=\d)/g, "$1" + t) + (c ? d + Math.abs(n - i).toFixed(c).slice(2) : "");
+			};
+			
+			if(!str == ''){
+			  var parts = this.divideAndConquer(str);
+			  var integerPart = parts[0].replace(/\,/g,'');
+			  var decimalPart = parts[1].replace(/\,/g,'');
+			  if(this.validateInteger(integerPart) && this.validateInteger(decimalPart)) {
+			      if (decimalPart == "") {
+				 	auxDecSeparator = "";
+				  }
+			      fullNumber = integerPart +  auxDecSeparator + decimalPart;
+	//		      total = fullNumber.formatMoney(decimalQty,decimalSeparator,this.thousSeparator);
+			      obj.value = this.setMask(fullNumber, this.mask);
+			  }else{
+				  errorMessage = errorMessage + " debe ser numérico.";
+			  	  showError(errorMessage,$(obj));
+			      obj.value = '';
+			  }
+			}
+		}
+	} catch(err) {
+		console.log(err);
+	}
+    },
+
+    divideAndConquer: function(str){
+    	if(str[0]==","){
+    		str="0"+str;
+    	}
+        var n = this.getIntegerPart(str);
+        var d = this.getDecimalPart(str);
+        return [n,d];
+    },
+
+    getIntegerPart: function(str){
+        var n = '';
+	if(str != null) {
+	   str = str.toString();
+           if(str.indexOf(',') >= 0 ){
+            	for(i=0;i < str.split(',').length-1; i++){n+=str.split(',')[i];}
+           } else{
+           	n = str;
+           }
+            n = n.replace(',', '');
+		//alert(n);
+	}
+        return n;
+    },
+
+    getDecimalPart: function(str){
+	if(str != null) {
+	   str = str.toString();
+	}
+	
+	var d = '';
+       	if( str.indexOf(',') > 0 ){
+        	d = str.split(',')[str.split(',').length-1];
+        } 
+        return d;
+
+    },
+
+    validateInteger: function(str){
+        var parts = this.splitNumber(str);
+        var result = true;
+        for(i=0;i<parts.length;i++){
+            value = parts[i] - 0;
+            result = this.isValidNumber(value);
+            if(!result){return false;}    
+        }
+        return result;
+    },
+
+    isValidNumber: function(value){
+        return !isNaN(parseFloat(value)) && isFinite(value);
+    },
+
+    splitNumber: function (str){
+        var splitted = str.split('');
+        var parts = [];
+        var partial = '';
+        for(i=0;i<splitted.length;i++){
+            partial = partial + splitted[i];
+            if(i > 0 && i % 5 == 0){
+                parts[parts.length] = partial;
+                partial = '';
+            }
+        }
+        if(partial != ''){parts[parts.length]=partial;}
+        return parts;
+    },
+
+    getCleanIntegerPart: function (str) {
+		var n = this.getIntegerPart(str);
+		var isDirty = true;
+		while(isDirty){
+			if(n.indexOf(this.thousSeparator) >= 0 ){
+			    n = n.replace(this.thousSeparator,'');
+			} else{
+			    isDirty = false;	
+			}
+		}
+		return n;
+    },
+	
+	getUnformattedNumberForValidation: function ( str ) {
+		var n = ''
+		if(str[0]==","){
+    		str="0"+str;
+    	}
+		if(this.getDecimalPart(str) != null && this.getDecimalPart(str) == '' ) {
+			n = this.getCleanIntegerPart( str );
+		} else {
+			n = this.getCleanIntegerPart( str ) + "." + this.getDecimalPart( str );
+		}
+		return n;
+	},
+	
+
+
+	setMask : function(_v, _m) {
+		var v;
+		// make sure there's only one decimal symbol
+//		if (this.decSeparator == ".") {
+			v = String(_v).replace(/[^\d.-]*/gi, ""), m = _m;
+			v = v.replace(/\./, "d").replace(/\./g, "").replace(/d/, ".");
+//		} else {
+//			v = String(_v).replace(/[^\d,-]*/gi, ""), m = _m;
+//			v = v.replace(/,/, "d").replace(/,/g, "").replace(/d/, ",");
+//		}
+
+		// check to see if an invalid mask operation has been entered
+//		if (!/^(\$[\s]?)?(([\+-]?([0#]{1,3},)?[0#]*(\.[0#]*)?)|([\+-]?\([\+-]?([0#]{1,3},)?[0#]*(\.[0#]*)?\)))([\s]?((\$)|(R\$)|(USD)))?$/
+		if (!/^(((\$)|(R\$)|(US\$)|(U\$S))[\s]?)?(([\+-]?([0#]{1,3},)?[0#]*(\.[0#]*)?)|([\+-]?\([\+-]?([0#]{1,3},)?[0#]*(\.[0#]*)?\)))([\s]?((\$)|(R\$)|(USD)))?$/
+				.test(m))
+			return;
+		// this.throwError(1, "An invalid mask was specified for the \nMask
+		// constructor.", _v);
+
+		// if( (_d == true) && (v.length == this.strippedValue.length) ) v =
+		// v.substring(0, v.length-1);
+		//
+		// if( this.allowPartial && (v.replace(/[^0-9]/, "").length == 0) )
+		// return v;
+		this.strippedValue = v;
+
+		if (v.length == 0)
+			v = NaN;
+		// var vn = Number(v);
+		// if (isNaN(vn))
+		// return;
+		// this.throwError(2, "The value entered was not a number.", _v);
+
+		// if no mask, stop processing
+		if (m.length == 0)
+			m='###0.#####';
+
+		var isNegative = /^[-]/.test(v);
+		// var isNegative = (vn != 0 && Math.abs(vn) * -1 == vn);
+
+		if (isNegative){
+			v= String(-1 * v);
+		}
+		
+		// get the value before the decimal point
+		var vi = (v.indexOf('\.') > -1) ? v.split('\.')[0] : v;
+		// get the value after the decimal point
+		var vd = (v.indexOf('\.') > -1) ? v.split('\.')[1] : "";
+		var _vd = vd;
+
+
+		// check for masking operations
+		var show = {
+			"$" : /^[\$]/.test(m),
+			"R$" : /(R\$)$/.test(m),
+			"USD" : /(USD)$/.test(m),
+			"US$" : /^(US\$)/.test(m),
+			"U$S" : /^(U\$S)/.test(m),
+			"$$" : /(\s\$)$/.test(m),
+			"(" : (isNegative && (m.indexOf("(") > -1)),
+			"+" : ((m.indexOf("+") != -1) && !isNegative)
+		}
+		show["-"] = (isNegative && (!show["("] || (m.indexOf("-") != -1)));
+
+		// replace all non-place holders from the mask
+		m = m.replace(/[^#0.,]*/gi, "");
+
+		/*
+		 * make sure there are the correct number of decimal places
+		 */
+		// get number of digits after decimal point in mask
+		var dm = (m.indexOf(".") > -1) ? m.split(".")[1] : "";
+		if (dm.length == 0) {
+			vi = String(Number(vi));
+			vd = "";
+		} else {
+			// find the last zero, which indicates the minimum number
+			// of decimal places to show
+			var md = dm.lastIndexOf("0") + 1;
+			// if the number of decimal places is greater than the mask, then
+			// round off
+			if (vd.length > dm.length)
+				vd = String(vd.substring(0, dm.length));
+			// otherwise, pad the string w/the required zeros
+			else
+				while (vd.length < md)
+					vd += "0";
+		}
+
+		/*
+		 * pad the int with any necessary zeros
+		 */
+		// get number of digits before decimal point in mask
+		var im = (m.indexOf(".") > -1) ? m.split(".")[0] : m;
+		im = im.replace(/[^0#]+/gi, "");
+		// find the first zero, which indicates the minimum length
+		// that the value must be padded w/zeros
+		var mv = im.indexOf("0") + 1;
+		// if there is a zero found, make sure it's padded
+		if (mv > 0) {
+			mv = im.length - mv + 1;
+			while (vi.length < mv)
+				vi = "0" + vi;
+		}
+
+		/*
+		 * check to see if we need commas in the thousands place holder
+		 */
+		if (/[#0]+,[#0]{3}/.test(m)) {
+			// add the commas as the place holder
+			var x = [], i = 0, n = Number(vi);
+			while (n > 999) {
+				x[i] = "00" + String(n % 1000);
+				x[i] = x[i].substring(x[i].length - 3);
+				n = Math.floor(n / 1000);
+				i++;
+			}
+			x[i] = String(n % 1000);
+			vi = x.reverse().join(this.thousSeparator);
+		}
+
+		/*
+		 * combine the new value together
+		 */
+		if ((vd.length > 0 && !this.allowPartial)
+				|| ((dm.length > 0) && this.allowPartial
+						&& (v.indexOf(this.decSeparator) > -1) && (_vd.length >= vd.length))) {
+			v = vi + this.decSeparator + vd;
+		} else if ((dm.length > 0) && this.allowPartial
+				&& (v.indexOf(this.decSeparator) > -1)
+				&& (_vd.length < vd.length)) {
+			v = vi + this.decSeparator + _vd;
+		} else {
+			v = vi;
+		}
+
+		if (show["$"])
+			v = this.mask.replace(/(^[\$])(.+)/gi, "$ ") + v;
+		if (show["R$"])
+			v = v + " R$";
+		if (show["$$"])
+			v = v + " $";
+		if (show["US$"])
+			v = "US$ " + v;
+		if (show["U$S"])
+			v = "U$S " + v;
+		if (show["USD"])
+			v = v + " USD";
+		if (show["+"])
+			v = "+" + v;
+		if (show["-"])
+			v = "-" + v;
+		if (show["("])
+			v = "(" + v + ")";
+		return v;
+	}
+
+};
+
+function buildErrorMessage(msg) {
+	var arrayMsg = msg.split("\n");
+	var outPut = "<ul class=\"error-panel_list\">";
+
+	for (var i = 0; i < arrayMsg.length; i++) {
+		if (arrayMsg[i].length == 0) {
+			continue;
+		} else {
+			outPut += "<li>" + arrayMsg[i] + "</li>";
+		}
+	}
+	return outPut + "</ul>";
+}
+
+
+function earlyValidation(msg,validateFunction,target2,showErrorIn2){
+
+	if(!($("#vtAlreadyInitiates").length>0)){
+		var inputAI = $("<span id='vtAlreadyInitiates' style='display:none;' value='"+
+				$(this).attr("id")+
+				(typeof msg !== 'string' ? $(msg).attr("id") : msg.toString().replace(/\s/g,'')) + (target2!==undefined ? $(target2).attr("id") : "WO")+"'>");
+
+		if($(".container-tab-component").length){
+			$(".container-tab-component").append(inputAI);
+		}else{
+			$("#container").append(inputAI);
+		}
+	}else{
+	    var vtString = $(this).attr("id")+
+		(typeof msg !== 'string' ? $(msg).attr("id") : msg.toString().replace(/\s/g,'')) + (target2!==undefined ? $(target2).attr("id") : "WO");
+		if($("#vtAlreadyInitiates").attr("value").indexOf(vtString)!=-1){
+			return;
+		}
+		
+		$("#vtAlreadyInitiates").attr("value",$("#vtAlreadyInitiates").attr("value")+"__"+vtString);
+	}
+	var elem = $(this);
+	var myFunction = function(){
+		var elem = $(this);
+		if(!document.hasFocus())return;
+//		setTimeout(function(){ 
+			try{
+				var onclickattr = $(event.relatedTarget).attr("onclick");
+				if(($(event.relatedTarget).is("button") || $(event.relatedTarget).is("a")) 
+						&& (typeof onclickattr !== typeof undefined && onclickattr !== false)&& appClickOccur){
+					return;
+				}
+			}catch(err){}
+			
+			if(!($(elem).is(":visible"))){
+				return;
+			}
+			earlyValidationPrivate(elem,validateFunction,msg,false,target2,showErrorIn2);
+//		},100);
+	};
+	$(elem).on('blur',myFunction);
+
+	var onfocus = $(elem).attr('onfocus');
+	if (!(typeof onfocus !== typeof undefined && onfocus !== false)) {
+		onfocus = "";
+	}
+	onfocus = onfocus.replace("clearError(null,this);","");
+	onfocus = 'clearError(null,this);'+onfocus;
+	
+	if(target2!==undefined && !$(target2).prop("readonly") && !$(target2).is("span")){
+		$(target2).on('blur',function(){myFunction.call(elem);});
+		var onfocusTarget2 = $(target2).attr('onfocus');
+		if (!(typeof onfocusTarget2 !== typeof undefined && onfocusTarget2 !== false)) {
+			onfocusTarget2 = "";
+		}
+		onfocusTarget2 = 'clearError('+
+				(typeof msg === 'string' ? '\''+msg+'\'' : '\'#'+$(msg).attr('id')+'#\'')
+				+',document.getElementById(\''+$(elem).attr("id")+'\'));'+onfocusTarget2;
+		if(showErrorIn2!==undefined && showErrorIn2 == true){
+			onfocus = 'clearError('+
+			(typeof msg === 'string' ? '\''+msg+'\'' : '\'#'+$(msg).attr('id')+'#\'')
+			+',document.getElementById(\''+$(target2).attr("id")+'\'));'+onfocus;
+			onfocusTarget2 = onfocusTarget2.replace("clearError(null,this);","");
+			onfocusTarget2 = 'clearError(null,this);'+onfocusTarget2;
+		}
+		$(target2).attr('onfocus',onfocusTarget2);
+	}
+	$(elem).attr('onfocus',onfocus);
+	
+	if(typeof msg !== 'string'){
+		$(this).on('focus',function(){
+			$(msg).css("display","none");
+		});
+		if(target2!==undefined && !$(target2).prop("readonly") && !$(target2).is("span") && showErrorIn2!==undefined && showErrorIn2 == true){
+			$(target2).on('focus',function(){
+				$(msg).css("display","none");
+			});
+		}
+	}
+	var onClickFunction = function(){
+		if(!($(elem).is(":visible"))){
+			return true;
+		}
+		if(typeof msg !== 'string'){
+				$(msg).css("display","none");
+		}
+		var invalid = earlyValidationPrivate(elem,validateFunction,msg,true,target2,showErrorIn2);
+		if(invalid){
+			earlyAddReadableMessage($(elem),msg, showErrorIn2);
+		}
+		return !invalid;
+	};
+	if(typeof earlyValidationFunctions === 'undefined'){
+		earlyValidationFunctions = [onClickFunction];
+	}else{
+		earlyValidationFunctions.push(onClickFunction);
+	}
+}
+
+function earlyValidationPrivate(elem,validateFunction,validationMsg,isFromButton,elem2,showErrorIn2){
+	var isReadOnly= elem.prop("readonly");
+	var result = validateFunction(isFromButton);
+	var isntValid = !isReadOnly && !result;
+
+	if(isntValid){
+		if(typeof validationMsg === 'string'){
+			showError(validationMsg,[elem]);
+			if(showErrorIn2!==undefined&&showErrorIn2==true)
+				showError(validationMsg,[elem2]);
+		}else{
+			$(validationMsg).css("display","block");
+			showError("#"+$(validationMsg).attr("id")+"#",[elem]);
+			if(showErrorIn2!==undefined&&showErrorIn2==true)
+				showError("#"+$(validationMsg).attr("id")+"#",[elem2]);
+		}
+	}
+	return isntValid;
+}
+
+
+function clearError(msg, elem){
+	if ($(elem).is(":hidden")) {
+		return;
+	}
+	var labelError = $(elem).parent().siblings(".error-validation");
+	var label = $(elem).siblings("#label_"+$(elem).attr("id"));
+	var removeError = false;
+	if(msg==null){
+		removeError = true;
+	}else if(labelError.length){
+		var errors = $(labelError).html();
+			$(labelError).find("p:contains('"+msg+"')").remove();
+		if($(labelError).children().length < 1){
+			removeError = true;
+		}
+	}
+	if(removeError){
+		if(label.length){
+	  		$(label).removeClass("error");
+		}
+		$(elem).removeClass("error");
+		labelError.remove();
+	}
+}
+
+
+function getElementValue(elem){
+	var elem = $(elem);
+	var elemValue = "";
+	try{
+		
+	if("checkbox"==elem.attr("type")){
+		elemValue=elem.is(':checked') ;
+	} else {
+		elemValue = $(elem).val();
+		if (elemValue==undefined){
+			elemValue = elem.options[elem.selectedIndex].value;
+		}
+	}
+	} catch(err){
+		elemValue = "";
+	}
+	return elemValue;
+}
+
+function showError(errorMessage) {
+	showError(errorMessage,undefined)
+}
+
+function showError(errorMessage,elems) {
+	$("#errorPanelCollection").hide();
+	var errorMessageComplete = errorMessage;
+	//buildErrorMessage(errorMessage);
+	if ($("#errorPanelModal").val() == "true") {
+		modalError.alert(errorMessageComplete);
+	} else {
+		if(elems!==undefined)
+			showErrorsInElements(errorMessageComplete, elems);
+		else
+			showErrorPanel(errorMessageComplete, false,true);
+	}
+}
+
+
+function showErrorsInElements(msg,elems) {
+	var arrayMsg = msg.split("\n");
+	elems = $(elems);
+	for(i in arrayMsg){
+		$(elems[i]).addClass("error");
+		var label = $(elems[i]).siblings("#label_"+$(elems[i]).attr("id"));
+		if($(label).length)
+			$(label).addClass("error");
+		if(msg!=""){
+			var errorsElem = $(elems[i]).parent().parent().find("label.error-validation");
+			var hidden = "";
+			/*if(arrayMsg[i].startsWith("#") && arrayMsg[i].endsWith("#")){
+				hidden = "style=\"display:none;\"";
+			}*/
+			if(arrayMsg[i].substr(0,1)=="#" && arrayMsg[i].substr(-1)=="#"){
+				hidden = "style=\"display:none;\"";
+			}
+		      var agregarMsj=true;
+		      if(errorsElem.length){
+		        var parrafos=$(errorsElem).find('p');
+		        for (var int = 0; int < parrafos.length; int++) {
+		          var item=parrafos[int];
+		          if ($(item).text()==arrayMsg[i]){
+		            agregarMsj=false;
+		            break;
+		          }
+		        }
+		        if (agregarMsj){
+		          errorsElem.append("<p "+hidden+" >"+arrayMsg[i]+"</p>");
+		        }
+			}else{
+				var idErrorMess = "errorMessage_"+$(elems[i]).attr("id");
+				$(elems[i]).parent().parent().append("<label class=\"error-validation\" id=\""+idErrorMess+"\"><p "+hidden+" >"+arrayMsg[i]+"</p></label>");
+			}
+		}
+	}
+}
+
+function showErrorPanel(msg, changeMessage) {
+	 showErrorPanel(msg, changeMessage,false);
+}
+
+function showErrorPanel(msg, changeMessage, overItems) {
+	if(overItems){
+		$('form#main_form input,form#main_form select,form#main_form textarea').each(function(){
+			var arrayMsg = msg.split("\n");
+			for(i in arrayMsg){
+				if(arrayMsg[i].indexOf($(this).attr("caption")) == 0){
+					$(this).parent().append("<label class=\"label_default error\">"+arrayMsg[i]+"</label>");
+					break;
+				}
+			}
+		});
+	}else{
+		var destDiv = "#errorPanel";
+		if ($("#modalErrorPanel").length > 0) {
+			destDiv = "#modalErrorPanel";
+			changeMessage = true;
+		} else if ($("#errorPanelLogin_name").length > 0) {
+			destDiv = "#errorPanelLogin_name";
+	
+		} else if ($("#errorPanelLogin_password").length > 0) {
+			destDiv = "#errorPanelLogin_password";
+		} else if ($("#errorPanelAutoAdhesion").length > 0) {
+			destDiv = "#errorPanelAutoAdhesion";
+			changeMessage = true;
+		} else if ($("#errorPanelAuthentication").length > 0) {
+			destDiv = "#errorPanelAuthentication";
+			changeMessage = true;
+		} else {
+			$(destDiv).html(msg);
+		}
+		if (changeMessage == true) {
+			$(destDiv).html(msg);
+		}
+	
+		$(destDiv).fadeIn(800);
+		$(window).scrollTop(0);
+		
+		var temporal = document.createElement("div");
+		temporal.innerHTML = msg;
+		var texto = temporal.textContent || temporal.innerText || "";
+		if($("#textoDiv") != null){
+			$("#textoDiv").val(texto);
+		    $("#textoDiv").focus();
+		    $("#textoDiv").hide();
+		}
+	}
+}
+
+function validateForm(formObject) {
+	deleteErrorReadableMessage();
+	var validationRadio = 'false';
+	var validarRadio = 'false';
+	var isValid = true;
+	var readableMessage = "Algunos de los campos contienen errores; ";
+	//$('.error').removeClass('error');
+	// valida los radioButtonFields obligatorios
+	// var radioGroups = document.getElementsByName('radioButtonContainer');
+	var radioGroups = formObject.id != 'main_form'
+			&& formObject.id != 'main_form_modal' ? $.grep(
+			$(formObject.elements), function(e) {
+				return $(e).attr('name') == "radioButtonContainer"
+			}) : $('[name="radioButtonContainer"]');
+
+	for (var u = 0; u < radioGroups.length; u++) {
+		var radioGroup = radioGroups[u];
+
+		clearError(null,$(radioGroup).find('input')[0]);
+		if (!($(radioGroup).is(":hidden"))
+				&& $(radioGroup).attr('required') == 'required') {
+			var radios = $(radioGroup).find('input');
+			var ok = false;
+			for (var i = 0; i < radios.length; i++) {
+				ok = ok || $(radios[i]).is(':radio')
+						&& $(radios[i]).is(':checked');
+			}
+			if (!ok) {
+				var contenedor = radioGroup;
+				if ($(contenedor).attr('validationMessage') != null) {
+					showError($(contenedor).attr('validationMessage'), radios[0]);
+				}else{
+					showError(traducir("Debe seleccionar una opcion"), radios[0]);
+				}
+				addReadableMessage($(radios[0]));
+			}
+		}
+	}
+
+	for (var i = 0; i < formObject.elements.length; i++) {
+		formElement = retrieveFormElement(formObject, i);
+		if ($(formElement).is(":hidden")||$(formElement).is(":disabled")||($(formElement).is("input")&&$(formElement).attr("type")=="radio")) { // No se deben validar elementos que no son visibles
+			continue;
+		}
+		clearError(null,$(formElement));
+		if(!validateFormElement(formElement,false)){
+			isValid = false;
+			addReadableMessage($(formElement));
+		}
+	} // termina la validacion del form
+
+	if(typeof earlyValidationFunctions !== 'undefined'){
+		for(i in earlyValidationFunctions){
+			if(!earlyValidationFunctions[i]()){
+				isValid = false;
+			}
+		}
+	}
+
+	// Se valida si existe el atributo del avatar para que sea obligatorio
+	if (document.getElementById('avatarIsNotNull') != null 
+			&& document.getElementById('avatarIsNotNull').value) {
+
+		var img = document.getElementById('currentImg').src;
+		var url = img.split('/');
+
+		if (url[url.length - 1] == 'default.png') {
+			isValid = false;
+			errorMessage = traducir('Debe seleccionar un avatar');
+			//showError(errorMessage,$(formElement));
+		}
+	}
+
+
+	if (document.getElementById('second-factor') != null && document.getElementById('main_form_modal') != null) {
+
+		var formSecondFactor = document.getElementById('main_form_modal');
+
+		for (var i = 0; i < formSecondFactor.elements.length; i++) {
+			var formElementValue = '';
+			var pageItem = retrieveFormElement(formSecondFactor, i);
+			if($(pageItem).val()==""){
+				clearError(null,$(pageItem));
+			}
+			//clearError(null,$(pageItem));
+			var itemRequiered = pageItem.hasAttribute('required')
+
+			if (itemRequiered && pageItem.value == '') {
+				isValid = false;
+				if (pageItem.hasAttribute('validationMessage')){
+					errorMessage = pageItem.getAttribute('validationMessage') ;
+				}else{
+					errorMessage = traducir("Dato obligatorio") ;
+				}
+				showError(errorMessage,$(pageItem));
+				addReadableMessage($(pageItem));
+			}
+		}
+	}
+
+	if (CyberBank.validator.validateHourFieldsConsistency()) {
+		isValid = false;
+		errorMessage += CyberBank.validator.getErrors();
+		showError(errorMessage);
+	}
+
+
+	if(!isValid){
+		readErrorMessage();
+		formatInputsTypeTime();
+	}
+	
+	return isValid;
+}
+
+function readErrorMessage(){
+	var readableText = $("#errorPanel div");
+	$("#errorPanel").css("display","block");
+    readableText.focus();
+	//$("#errorPanel").css("display","none");
+	$("#errorPanel").removeClass("error-panel_default");
+	$("#errorPanel").css("height","0em");
+	$("#errorPanel").css("text-indent","-999em");
+	
+}
+
+function deleteErrorReadableMessage(){
+	$("#errorPanel div").remove();
+}
+
+function addReadableMessage(elem){
+	var readableText = $("#errorPanel div");
+	if(readableText.length == 0){
+		readableText = $("<div tabindex='0'/>");
+		readableText.append("<p>Algunos de los campos contienen errores;</p>")
+		$("#errorPanel").append(readableText);
+	}
+	var msj = readableText.find("#"+$(elem).attr("id")+"_readable-error");
+	if(msj.length==0){
+		msj = $("<p/>");
+		msj.attr("id",$(elem).attr("id")+"_readable-error");
+		readableText.append(msj);
+	}
+	var errors = $(elem).parent().siblings(".error-validation").html().replace(/<p>/g,"").replace(/<\/p>/g,", ");
+	msj.text("Campo "+$(elem).attr("caption")+": "+errors);
+}
+
+function earlyAddReadableMessage(elem, elem2, showErrorIn2){
+	var readableText = $("#errorPanel div");
+	if(readableText.length == 0){
+		readableText = $("<div tabindex='0'/>");
+		readableText.append("<p>Algunos de los campos contienen errores;</p>")
+		$("#errorPanel").append(readableText);
+	}
+	var msj = readableText.find("#"+$(elem).attr("id")+"_readable-error");
+	if(msj.length==0){
+		msj = $("<p/>");
+		msj.attr("id",$(elem).attr("id")+"_readable-error");
+		readableText.append(msj);
+	}
+	
+	var errors="";
+	
+	if(showErrorIn2!==undefined&&showErrorIn2==true){
+		errors = $(elem2).html();
+	}else{
+		errors = $(elem).parent().siblings(".error-validation").html().replace(/<p>/g,"").replace(/<\/p>/g,", ");
+	}
+	
+	msj.text("Campo "+$(elem).attr("caption")+": "+errors);
+}
+
+function validateFormElement(formElement,isEarly){
+	formElement = $(formElement)[0];
+	var formElementValue = '';
+	var errorMessage = '';
+	var isValid=true;
+	//if (validateWithTabs("#" + formElement.getAttribute('id'))) {
+		switch (formElement.type) {
+			case 'text':
+			case 'hidden':
+			case 'password':
+			case 'radio':
+			case 'checkbox':
+			case 'textarea':
+			case 'time':
+				formElementValue = formElement.value;
+				var notApplyTrim = $(formElement).attr("notTrimString");
+				//saco espacios en blanco a izquierda y derecha si no es password
+				if (formElement.type != 'password' && notApplyTrim != "true") {
+					formElementValue = cleanValueSpaces(formElementValue);
+					// reemplazo el valor por el valor correcto
+					formElement.value = formElementValue;
+				}
+
+				break;
+			case 'select-one':
+				var selIndex = formElement.selectedIndex;
+				if (selIndex > -1)
+					formElementValue = formElement.options[selIndex].value;
+				break;
+			default:
+				return true;
+		}
+
+		// validar que no exeda el rango permitido para el tipo de dato int
+		if (formElement.type == 'text' && isIntField(formElement.id)) {
+			formElementValue = formElement.value;
+			if ((formElementValue > 2147483647) || (formElementValue < -2147483648)) {
+				isValid = false;
+				showError(traducir("Sobrepasa el maximo permitido para el tipo de dato"),$(formElement));
+			}
+		}
+
+		var isBlank;
+
+		if (formElement.type == 'select-one') {
+			isBlank = (formElementValue == 'Ninguno' || formElementValue == '');
+		} else {
+			isBlank = formElementValue == '';
+		}
+
+		var validateRequired = formElement.hasAttribute('required') &&
+			$(formElement).closest(".hiddenSection").length == 0 &&
+			isBlank;
+
+
+
+
+		// es un campo extra de un radio button
+		if (validateRequired && !(formElement.id === 'undefined') && formElement.id.indexOf('extraField_') >= 0) {
+			var dependantElement = document.getElementById(formElement.getAttribute('dependant'));
+			validateRequired = validateRequired && dependantElement.checked;
+		}
+		
+		if (validateRequired) {
+			isValid = false;
+			if (formElement.hasAttribute('validationMessage')){
+				errorMessage = formElement.getAttribute('validationMessage');
+			}else{
+				errorMessage = traducir("Dato obligatorio");
+			}
+			showError(errorMessage,$(formElement));
+		}
+
+		if ((formElement.readOnly == undefined) ||
+			(!isBlank && formElement.readOnly != true)) {
+
+			if (formElement.getAttribute('name') != null) {
+
+				if (formElement.getAttribute('name').indexOf('TIME_HR') != -1) {
+
+					CyberBank.validator.addTimeComponent(formElement.getAttribute('idgroup'), formElement.getAttribute('caption'), formElementValue);
+
+					if ((!isNaN(formElementValue)) && (Number(formElementValue) > 23 || Number(formElementValue) < 0)) {
+						isValid = false;
+						showError(traducir("Hora invalida"),$(formElement));
+					} else {
+						if(!validateTimeConstrain(formElement, 'TIME_HR')){
+							isValid = false;
+						}
+					}
+
+				}
+				if (formElement.getAttribute('name').indexOf('TIME_MIN') != -1) {
+
+					CyberBank.validator.addTimeComponent(formElement.getAttribute('idgroup'), formElement.getAttribute('caption'), formElementValue);
+
+					if ((!isNaN(formElementValue)) && (Number(formElementValue) > 59 || Number(formElementValue) < 0)) {
+						isValid = false;
+						showError("Minutos inválidos",$(formElement));
+					}
+/*                   else {
+                	error = validateTimeConstrain(formElement,'TIME_MIN');
+                	if (error.lenght>0){
+                		isValid = false;
+				    	errorMessage = setErrorMessage(errorMessage, formElement, formElement.getAttribute('caption') + error + "\n";
+						document.getElementById(formElement.id).focus(); 
+						}
+                }
+*/
+				}
+
+
+			}
+
+			// Fix track 24533
+			if (isFloatField(formElement.id)&&!isEarly) {
+				setTimeout($("#" + formElement.id).attr('onBlur'),1);
+				copyFromUnmasked(formElement);
+				formElementValue = formElement.value;
+			}
+
+			if (isNumeric(formElement.id)) {
+				// -- Remueve el formato de automascarar para validacion.
+				formElementValue = CB.automask
+					.getUnformattedNumberForValidation(formElementValue);
+			}
+
+			if (formElement.getAttribute('rangemin') != null) {
+				var rangeMinString = formElement.getAttribute('rangemin');
+				var rangeMin = Number(rangeMinString);
+				//--Si ambos valores son numericos se compara a nivel numerico
+				if (!isNaN(formElementValue) && !isNaN(rangeMinString)) {
+					if ((rangeMin > Number(formElementValue))) {
+						isValid = false;
+						showError(traducir("Es inferior al minimo (") + rangeMin + ')',$(formElement));
+					}
+				} else { //-- caso contrario se compara como cadenas de texto
+					if ((rangeMinString > formElementValue)) {
+						isValid = false;
+						showError(traducir("Es inferior al minimo (") + rangeMinString + ')',$(formElement));
+					}
+				}
+
+			}
+
+			if (formElement.getAttribute('rangemax') != null) {
+				var rangeMaxString = formElement.getAttribute('rangemax');
+				var rangeMax = Number(rangeMaxString);
+				//--Si ambos valores son numericos se compara a nivel numerico
+				if (!isNaN(formElementValue) && !isNaN(rangeMaxString)) {
+					if (rangeMax < Number(formElementValue)) {
+						isValid = false;
+						showError(traducir("Excede el maximo (") + rangeMax + ')',$(formElement));
+					}
+				} else { //-- caso contrario se compara como cadenas de texto
+					if (rangeMaxString < formElementValue) {
+						isValid = false;
+						showError(traducir("Excede el maximo (") + rangeMaxString + ')',$(formElement));
+					}
+				}
+			}
+
+			var regex = null;
+
+			try {
+				if (formElement.getAttribute('regex') != null) {
+					regex = new RegExp(formElement.getAttribute('regex'));
+				}
+			} catch (e) { //En caso de una expresion mal formada, se evita que se rompa el javascript.
+				regex = null;
+			}
+
+
+			var regexDesc = formElement.getAttribute('regexDesc');
+
+			if (formElement.getAttribute('checkfloat') != null && formElement.getAttribute('checkfloat') != '') {
+
+				if (regex == null) {
+					regex = /^(\ +|-)?\d{0,15}[[.,]?\d{0,13}]?$/;
+					if (regexDesc == null)
+						regexDesc = ' ' + traducir('El numero debe tener como maximo 15 enteros y 13 decimales');
+					else
+						regexDesc += ' ' + traducir('El numero debe tener como maximo 15 enteros y 13 decimales');
+				}
+
+
+
+				var aux = formElementValue.replace(/,/, ".");
+				if (!regex.test(formElementValue)) {
+					isValid = false;
+					if (regexDesc == null) {
+						errorMessage = traducir('Debe ser un numero');
+					} else {
+						errorMessage = regexDesc;
+					}
+					showError(errorMessage,$(formElement));
+				} else if ((aux.indexOf(',') > 0 || isNaN(aux))&&formElement.getAttribute('checkfloat') == 'doCheck') {
+							isValid = false;
+							showError(traducir("Numero mal formado"),$(formElement));
+				}
+			} else if (formElement.getAttribute('checkint') != null) {
+
+				if (regex == null) {
+					regex = /^(\ +|-)?[0-9]+$/;
+				}
+
+				if (!regex.test(formElementValue)) {
+					isValid = false;
+					if (regexDesc == null) {
+						errorMessage = traducir('Debe ser un numero entero');
+					} else {
+						errorMessage = regexDesc;
+					}
+					showError(errorMessage,$(formElement));
+				}
+			} else if (formElement.getAttribute('checkdate') != null) {
+				var dateFormat = formElement.getAttribute('dateformat');
+				if (!isDate(formElementValue, dateFormat)) {
+					isValid = false;
+					showError(traducir('Debe ser una fecha valida (dd/mm/yyyy)'),$(formElement));
+				} else { // Valido el rango
+					//clearError(traducir('debe ser una fecha valida (dd/mm/yyyy)'),$(formElement));
+					var fecha = formElementValue.split('/');
+					fecha = new Date(fecha[2], Number(fecha[1]) - 1, fecha[0]);
+
+					var rest = formElement.getAttribute('rest');
+
+					//si lo tengo que buscar de otro campo, obtengo los componentes
+					var resb = formElement.getAttribute('resb');
+
+					if (rest != null) {
+
+						// si el valor debe estar entre dos valores
+						if (rest == 'entre') {
+
+							var down = formElement.getAttribute('down');
+							var topDate = formElement.getAttribute('top');
+
+							var elemDown = null;
+							var elemTop = null;
+							var elemDownCaption = '';
+							var elemTopCaption = '';
+
+
+							// si busco las fechas en otros campos
+							if (resb == 'idRadio') {
+								var downId = down;
+								down = null;
+								if (downId != null) {
+									elemDown = document.getElementById(downId);
+									if (elemDown != null) {
+										down = elemDown.value;
+										elemDownCaption = elemDown.getAttribute('caption');
+									}
+								}
+								var topId = topDate;
+								topDate = null;
+								if (topId != null) {
+									elemTop = document.getElementById(topId);
+									if (elemTop != null) {
+										topDate = elemTop.value;
+										elemTopCaption = elemTop.getAttribute('caption');
+									}
+								}
+								if (down == null || topDate == null) {
+									isValid = false;
+									showError(traducir('Debe estar entre los valores correspondientes a los campos') + ' ' + elemDownCaption + ' ' + traducir('y') + ' ' +
+											elemTopCaption + ' ' + traducir('los cuales son invalidos'),$(formElement));
+								}
+							}
+
+							//los fechas ya vienen seteadas o ya las levante de los otros campos
+							if (down != null) {
+								elemDownCaption = down;
+								down = down.split('/');
+								down = new Date(down[2], Number(down[1]) - 1, down[0]);
+
+								if (fecha < down) {
+									isValid = false;
+									showError(traducir('Debe ser una fecha mayor a') + ' ' + elemDownCaption,$(formElement));
+								}
+							}
+
+							if (topDate != null) {
+								topDateString = topDate;
+								topDate = topDate.split('/');
+								topDate = new Date(topDate[2], Number(topDate[1]) - 1, topDate[0]);
+
+								if (fecha > topDate) {
+									isValid = false;
+									showError(traducir('Debe ser una fecha menor a') + ' ' + topDateString,$(formElement));
+								}
+							}
+
+
+						} 
+						else { // si no esta entre dos valores
+
+							date = formElement.getAttribute('date');
+
+							//me fijo si el valor es el id de otro coponente 
+							if (resb == 'idRadio') {
+								var dateId = date;
+								date = null;
+								if (dateId != null) {
+									var elemDate = document.getElementById(dateId);
+									if (elemDate != null)
+										date = elemDate.value;
+
+									if (date == null) {
+										isValid = false;
+										showError(traducir('Se debe comparar contra el campo') + ' ' + elemDate.getAttribute('caption') 
+												+ ' ' + traducir('el cual es invalido'),$(formElement));
+									}
+								}
+							}
+
+							var dateValue = date;
+
+							date = date.split('/');
+							date = new Date(date[2], Number(date[1]) - 1, date[0]);
+
+							typ = rest;
+
+							if (typ == 'less') {
+
+								if (fecha >= date) {
+									isValid = false;
+									showError(traducir('Debe ser una fecha menor a') + ' ' + dateValue,$(formElement));
+								}
+							}
+
+							if (typ == 'lessOrEqual') {
+
+								if (fecha > date) {
+									isValid = false;
+									showError(traducir('Debe ser una fecha menor o igual a') + ' ' + dateValue,$(formElement));
+								}
+							}
+
+							if (typ == 'more') {
+
+								if (fecha <= date) {
+									isValid = false;
+									showError(traducir('Debe ser una fecha mayor a') + ' ' + dateValue ,$(formElement));
+								}
+							}
+
+							if (typ == 'moreOrEqual') {
+
+								if (fecha < date) {
+									isValid = false;
+									showError(traducir('Debe ser una fecha mayor o igual a') + ' ' + dateValue,$(formElement));
+								}
+							}
+
+						}
+					}
+				}
+			} else {
+				if (regex != null) {
+					var validateRegex = true;
+					// es un campo extra de un radio button
+					if (!(formElement.id === 'undefined') && formElement.id.indexOf('extraField_') >= 0) {
+						var dependantElement = document.getElementById(formElement.getAttribute('dependant'));
+						validateRegex = validateRegex && dependantElement.checked;
+					}
+
+					if (validateRegex && !regex.test(formElementValue)) {
+						isValid = false;
+						if (regexDesc == null) {
+							errorMessage = traducir('El formato es incorrecto') ;
+						} else {
+							errorMessage = regexDesc;
+						}
+						showError(errorMessage,$(formElement));
+					}
+				}
+			}
+
+			if($(formElement).hasClass('type_time')){
+				if(formElementValue.length>=2){
+					var indexOfDots = formElementValue.indexOf(':');
+					if(indexOfDots==-1){
+						indexOfDots = 2;
+					}
+					var hora = formElementValue.substring(0,indexOfDots);
+					var min = formElementValue.substring(indexOfDots+1,formElementValue.length);
+					if(hora == "" || min == "" || Number(hora)>23 || Number(min)>59){
+						isValid = false;
+						errorMessage = traducir('El formato es incorrecto') ;
+						showError(errorMessage,$(formElement));
+					}
+				}
+			}
+		}
+	//}
+	return isValid;
+}
+
+
+//element el elemento en cuestion, es o la hora o los minutos, ya que estan en campos separados
+//type  puede ser 'TIME_HR' o 'TIME_MIN', depende que parte del campo hora este validando
+function validateTimeConstrain(element, type) {
+
+
+	var tiempo = parseInt(element.value);
+
+	// tipo de restriccion
+	var rest = element.getAttribute('rest');
+
+	// si lo tengo que buscar de otro campo, obtengo los componentes
+	var resb = element.getAttribute('resb');
+
+	if (rest != null) {
+
+		// si el valor debe estar entre dos valores
+		if (rest == 'entre') {
+
+			var down = element.getAttribute('down');
+			var topDate = element.getAttribute('top');
+
+			var elemDown = null;
+			var elemTop = null;
+			var elemDownCaption = '';
+			var elemTopCaption = '';
+
+			// si busco las fechas en otros campos
+			if (resb == 'idRadio') {
+				var downId = down;
+				down = null;
+				if (downId != null) {
+					elemDown = document.getElementById(downId + type);
+					if (elemDown != null) {
+						down = elemDown.value;
+						elemDownCaption = elemDown.getAttribute('caption');
+					}
+				}
+
+				var topId = topDate;
+				topDate = null;
+				if (topId != null) {
+					elemTop = document.getElementById(topId + type);
+					if (elemTop != null) {
+						topDate = elemTop.value;
+						elemTopCaption = elemTop.getAttribute('caption');
+					}
+				}
+				if (down == null || topDate == null) {
+					isValid = false;
+					showError(traducir('Debe estar entre los valores correspondientes a los campos') + ' ' + elemDownCaption + ' ' + traducir('y') + ' ' +
+							elemTopCaption + ' ' + traducir('los cuales son invalidos') ,$(formElement));
+				}
+			} else {
+				// obtengo la parte que corresponde al typo que estoy comparando
+				if (type == 'TIME_HR') {
+					down = down.split(":")[0];
+					topDate = topDate.split(":")[0];
+				} 
+				else {
+					down = down.split(":")[1];
+					topDate = topDate.split(":")[1];
+				}
+
+			}
+
+			//los fechas ya vienen seteadas o ya las levante de los otros campos
+			if (down != null) {
+				down = parseInt(down);
+				if (tiempo < down) {
+					isValid = false;
+					showError(traducir('Debe ser una hora mayor a') + ' ' + elemDownCaption,$(formElement));
+				}
+			}
+
+			if (topDate != null) {
+				topDate = parseInt(topDate);
+				if (tiempo > topDate) {
+					isValid = false;
+					showError(traducir('Debe ser una hora menor a') + ' ' + elemTopCaption,$(formElement));
+				}
+			}
+		} 
+		else { // si no esta entre dos valores
+
+			date = element.getAttribute('date');
+
+			// me fijo si el valor es el id de otro coponente
+			if (resb == 'idRadio') {
+				var dateId = date;
+				date = null;
+				if (dateId != null) {
+					var elemDate = document.getElementById(dateId + type);
+					if (elemDate != null)
+						date = elemDate.value;
+				}
+				if (date == null) {
+					isValid = false;
+					showError(traducir('Se debe comparar contra el campo') + ' ' + elemDate.getAttribute('caption') + ' ' + traducir('el cual es invalido') ,$(formElement));
+				}
+			}
+
+			var dateValue = date;
+
+			typ = rest;
+
+			date = parseInt(date);
+
+			if (typ == 'less') {
+
+				if (tiempo >= date) {
+					isValid = false;
+					showError(traducir('Debe ser una hora menor a') + ' ' + dateValue ,$(formElement));
+				}
+			}
+
+			if (typ == 'lessOrEqual') {
+
+				if (tiempo > date) {
+					isValid = false;
+					showError(traducir('Debe ser una hora menor o igual a') + ' ' + dateValue ,$(formElement));
+				}
+			}
+
+			if (typ == 'more') {
+
+				if (tiempo <= date) {
+					isValid = false;
+					showError(traducir('Debe ser una hora mayor a') + ' ' + dateValue ,$(formElement));
+				}
+			}
+
+			if (typ == 'moreOrEqual') {
+
+				if (tiempo < date) {
+					isValid = false;
+					showError(traducir('Debe ser una hora mayor o igual a') + ' ' + dateValue ,$(formElement));
+				}
+			}
+
+		}
+	}
+
+	return error;
+
+}
+
+function cargarPagina(text, reload) {
+	clearTabComponent();
+	if (text.indexOf('main_form_modal') != -1) {
+		checkAndLoadIfSecondFactorPresent();
+		return true;
+	}
+
+	if (reload == true) {
+		try {
+			$("#container").html(text);
+		} catch (err) {
+			console.log("cargarPagina - ERROR - " + err.message);
+		}
+	}
+
+
+	var error = false;
+
+	var container = document.getElementById("main_form");
+
+
+	if (container == null) {
+
+		return false;
+	}
+
+	drawDefaultCssTabs();
+	var tabSelected = searhTabSelected();
+
+	if ((!tabSelected || reload == true) && !isDrawInTab()) {
+		var tabDefault = searchIsDefaultTabPresent();
+		if (tabDefault) {
+			var id = tabDefault.attr('id');
+			var t = $("#solapa");
+			if (t) {
+				$("#solapa").attr('id', "solapa-" + id);
+			}
+			$("div[id^='solapa-']").attr('id', "solapa-" + id);
+			setTimeout(function(){$("#" + id).click();}, 10);
+		}
+	}
+
+
+	drawHoverComponent(tabSelected);
+
+	checkAndLoadIfSecondFactorPresent();
+
+	return true;
+
+}
+
+function cargarPrimerLayout(texto, workflowId, moduleFecha) {
+
+	try {
+		$("#container").html(texto);
+		setTimeout(reloadAsyncWidgets, 100);
+	} catch (err) {
+		console.log("cargarPrimerLayout - ERROR: " + err.message);
+	}
+
+	cargarPagina(texto, false);
+
+	showContainer();
+
+	cargarDocumentReady();
+
+	checkAndLoadIfSecondFactorPresent();
+
+}
+
+function cargarPrimerLayoutNewUser(texto) {
+
+	hideContainer();
+	collapseAllMenus();
+
+	document.getElementById("login").innerHTML = texto;
+	document.getElementById("login").style.display = '';
+	cargarDocumentReady();
+
+}
+
+
+function fillSelectField(fieldID, optionPairs) {
+	var selectObject = document.getElementById(fieldID);
+	selectObject.length = 0;
+	var i = 0;
+	var nulleable = isNulleable(selectObject);
+	
+	if(nulleable){
+		i=1;	
+	}
+
+	for (var key in optionPairs) {
+		
+		if (nulleable && key == 'Ninguno'){
+			selectObject.options[0] = new Option(optionPairs[key], key);
+			selectObject.selectedIndex = 0;
+		}else{
+			selectObject.options[i] = new Option(optionPairs[key], key);
+		}
+		i++;
+	}
+	$(selectObject).trigger( "selectFilled");
+}
+
+function preProcessingSubmit(){
+	
+}
+
+function getCharacterPressed(event){
+	//retorna el caracter presionado
+	var keyunicode = !event.charCode ? event.which : event.charCode;
+	var str = String.fromCharCode(keyunicode);
+	return str;
+}
+
+function doLogout() {	
+
+	//si la sesion termino por timeOut
+	if (CyberBank.sessionTimeOut) {
+		$("#timeOutForm").submit();
+	}else{
+		if(loginURL){
+			loginURL = loginURL.replace("#","");
+			window.location.href = loginURL;
+		}else{
+			window.location.href = "./";
+		}
+	}
+}
+
+function autocompletedate(field, event) {
+	if(event.keyCode == 47){
+		event.preventDefault();
+		return false;
+	}
+	//Ignora la tecla BACKSPACE
+	if (event.keyCode != 8) {
+	
+		value = field.value;
+	
+		switch (value.length) { 
+		
+			case 2:
+				field.value = value + '/';
+				break;
+			case 5:
+				field.value = value + '/';
+				break;
+			default:	
+		}
+	}
+}
+
+function exportToFile(a) {
+    var b = window.open(a,"_blank","")
+}
+
+function downloadPdf(fileName) {
+	var parameters = '';
+	var formElement = '';
+
+	formElement = document.getElementById('uuid');
+	parameters += formElement.name + '=' + encodeURIParams(formElement.value) + '&';
+	parameters += 'file=' + encodeURIParams(fileName);
+
+	var downloadWindow = window.open('./downloadPdf?'+parameters, '_blank', 'fullscreen=no');
+	}
+
+function reloadLogin(){
+	location.reload();
+}
+
+function doLogoutExt(){
+	doLogout();
+}
+
+function keepAliveExt(){
+	CyberBank.utils.createTimeOutManager();
+}
+
